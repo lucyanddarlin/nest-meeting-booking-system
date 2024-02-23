@@ -26,7 +26,7 @@ import { Permission } from './user/entities/permission.entity';
           password: configService.get('mysql_server_password'),
           database: configService.get('mysql_server_database'),
           poolSize: configService.get('mysql_server_pool_size'),
-          connectorPackage: configService.get('mysql_server_package'),
+          connectorPackage: 'mysql2',
           synchronize: true,
           logging: true,
           entities: [User, Role, Permission],
