@@ -4,11 +4,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { BaseExceptionsFilter } from './common/exceptions/base.exceptions.filter';
 import { ConfigService } from '@nestjs/config';
 import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter';
+import { TransformInterceptor } from './common/interceptor/transform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // 启动 CORS
   app.enableCors();
+  // 全局数据转换
+  app.useGlobalInterceptors(new TransformInterceptor());
   // 全局错误处理
   app.useGlobalFilters(new BaseExceptionsFilter(), new HttpExceptionsFilter());
   // 全局 DTO 参数校验
