@@ -4,6 +4,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
+import { User } from './user/entities/user.entity';
+import { Role } from './user/entities/role.entity';
+import { Permission } from './user/entities/permission.entity';
 
 @Module({
   imports: [
@@ -26,7 +29,7 @@ import { UserModule } from './user/user.module';
           connectorPackage: configService.get('mysql_server_package'),
           synchronize: true,
           logging: true,
-          entities: [],
+          entities: [User, Role, Permission],
           extra: {
             authPlugin: 'sha256_password',
           },
