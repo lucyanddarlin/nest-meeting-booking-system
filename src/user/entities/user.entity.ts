@@ -20,7 +20,7 @@ export class User {
   @Column({ length: 50, comment: 'pwd' })
   password: string;
 
-  @Column({ name: 'nick_name', length: 50, comment: 'nick_name' })
+  @Column({ name: 'nickname', length: 50, comment: 'nick_name' })
   nickName: string;
 
   @Column({ comment: 'email' })

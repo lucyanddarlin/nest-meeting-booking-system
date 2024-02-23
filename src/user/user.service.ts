@@ -1,26 +1,64 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { RedisService } from 'src/redis/redis.service';
+import { ErrorException } from 'src/common/exceptions/error.exceptions.filter';
+import {
+  CAPTCHA_INCORRECT,
+  CAPTCHA_NOT_EXIST,
+  USER_EXIST,
+} from 'src/constants/error/user';
+import { md5 } from 'src/utils/md5';
+import to from 'src/utils/to';
+import { COMMON_ERR } from 'src/constants/error/common';
+import { UserInfoDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+  private readonly logger = new Logger();
 
-  findAll() {
-    return `This action returns all user`;
-  }
+  @Inject(RedisService)
+  private readonly redisService: RedisService;
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+  @InjectRepository(User)
+  private userRepository: Repository<User>;
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+  async register(user: CreateUserDto): Promise<UserInfoDto> {
+    const captchaKey = `captcha_${user.email}`;
+    const captcha = await this.redisService.get(captchaKey);
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    if (!captcha) {
+      throw new ErrorException(CAPTCHA_NOT_EXIST, '验证码不存在或已过期');
+    }
+
+    if (user.captcha !== captcha) {
+      throw new ErrorException(CAPTCHA_INCORRECT, '验证码错误');
+    }
+
+    const existUser = await this.userRepository.findOneBy({
+      username: user.username,
+    });
+
+    if (existUser) {
+      throw new ErrorException(USER_EXIST, '用户已存在');
+    }
+
+    const nextUser = new User();
+    nextUser.username = user.username;
+    nextUser.nickName = user.nickname;
+    nextUser.password = md5(user.password);
+    nextUser.email = user.email;
+
+    const [err, newUser] = await to(this.userRepository.save(nextUser));
+    if (err) {
+      this.logger.error(JSON.stringify(err));
+      throw new ErrorException(COMMON_ERR, JSON.stringify(err));
+    }
+
+    await this.redisService.del(captchaKey);
+
+    return { ...newUser, password: undefined };
   }
 }
