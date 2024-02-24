@@ -1,7 +1,11 @@
 import { Controller, Get, Inject, Query } from '@nestjs/common';
 import { CaptchaService } from './captcha.service';
 import { RedisService } from 'src/redis/redis.service';
-import { CAPTCHA_EXPIRE_TIME } from 'src/constants/captcha';
+import {
+  CAPTCHA_END_INDEX,
+  CAPTCHA_EXPIRE_TIME,
+  CAPTCHA_START_INDEX,
+} from 'src/constants/captcha';
 
 @Controller('captcha')
 export class CaptchaController {
@@ -13,7 +17,9 @@ export class CaptchaController {
   @Get('email')
   async getEmailCaptcha(@Query('address') address: string) {
     const captchaKey = `captcha_${address}`;
-    const code = Math.random().toString().slice(2, 8);
+    const code = Math.random()
+      .toString()
+      .slice(CAPTCHA_START_INDEX, CAPTCHA_END_INDEX);
 
     await this.redisService.del(captchaKey);
     await this.redisService.set(captchaKey, code, CAPTCHA_EXPIRE_TIME);

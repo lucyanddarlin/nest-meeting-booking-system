@@ -9,6 +9,7 @@ import { Role } from './user/entities/role.entity';
 import { Permission } from './user/entities/permission.entity';
 import { RedisModule } from './redis/redis.module';
 import { CaptchaModule } from './captcha/captcha.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { CaptchaModule } from './captcha/captcha.module';
     UserModule,
     RedisModule,
     CaptchaModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -13,7 +13,7 @@ import {
 import { md5 } from 'src/utils/md5';
 import to from 'src/utils/to';
 import { COMMON_ERR } from 'src/constants/error/common';
-import { UserInfoDto } from './dto/update-user.dto';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UserService {
@@ -25,7 +25,14 @@ export class UserService {
   @InjectRepository(User)
   private userRepository: Repository<User>;
 
-  async register(user: CreateUserDto): Promise<UserInfoDto> {
+  @Inject(AuthService)
+  private readonly authService: AuthService;
+
+  /**
+   * 注册用户
+   * @param user
+   */
+  async register(user: CreateUserDto): Promise<string> {
     const captchaKey = `captcha_${user.email}`;
     const captcha = await this.redisService.get(captchaKey);
 
@@ -45,13 +52,15 @@ export class UserService {
       throw new ErrorException(USER_EXIST, '用户已存在');
     }
 
+    const hashPwd = await this.authService.hashPassword(user.password);
+
     const nextUser = new User();
     nextUser.username = user.username;
     nextUser.nickName = user.nickname;
-    nextUser.password = md5(user.password);
+    nextUser.password = hashPwd;
     nextUser.email = user.email;
 
-    const [err, newUser] = await to(this.userRepository.save(nextUser));
+    const [err] = await to(this.userRepository.save(nextUser));
     if (err) {
       this.logger.error(JSON.stringify(err));
       throw new ErrorException(COMMON_ERR, JSON.stringify(err));
@@ -59,6 +68,6 @@ export class UserService {
 
     await this.redisService.del(captchaKey);
 
-    return { ...newUser, password: undefined };
+    return '注册成功';
   }
 }
