@@ -12,7 +12,6 @@ import {
   TOKEN_INVALID,
   USER_IS_FROZEN,
   USER_NAME_EXIST,
-  USER_PASSWORD_INCORRECT,
 } from 'src/constants/error/user';
 import to from 'src/utils/to';
 import { COMMON_ERR } from 'src/constants/error/common';
@@ -24,7 +23,10 @@ import {
   UpdateBaseUserInfoDto,
   updateUserPasswordDto,
 } from './dto/update-user.dto';
-import { UserNotExistError } from 'src/common/exceptions/common/user.exceptions';
+import {
+  UserNotExistError,
+  UserPasswordInCorrect,
+} from 'src/common/exceptions/common/user.exceptions';
 import { CAPTCHA_KEY } from 'src/constants/captcha';
 
 @Injectable()
@@ -119,7 +121,7 @@ export class UserService {
       existUser.password,
     );
     if (!pwdVerification) {
-      throw new ErrorException(USER_PASSWORD_INCORRECT, '密码错误');
+      throw new UserPasswordInCorrect();
     }
 
     const payload = convertUserPayLoad(existUser);
@@ -197,7 +199,7 @@ export class UserService {
       existUser.password,
     );
     if (!verifyPassword) {
-      throw new ErrorException(USER_PASSWORD_INCORRECT, '旧用户密码错误');
+      throw new UserPasswordInCorrect();
     }
 
     const password = await this.authService.hashPassword(pwdObj.newPassword);
