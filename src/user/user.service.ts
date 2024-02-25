@@ -11,7 +11,6 @@ import {
   TOKEN_INVALID,
   USER_IS_FROZEN,
   USER_NAME_EXIST,
-  USER_NOT_EXIST,
   USER_PASSWORD_INCORRECT,
 } from 'src/constants/error/user';
 import to from 'src/utils/to';
@@ -20,6 +19,9 @@ import { AuthService } from 'src/auth/auth.service';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { LoginUserDto, LoginVo, PayLoad } from './dto/login-user.dto';
+import { UpdateBaseUserInfoDto } from './dto/update-user.dto';
+import { UserNotExistError } from 'src/common/exceptions/common/user.exceptions';
+import { CAPTCHA_KEY } from 'src/constants/captcha';
 
 @Injectable()
 export class UserService {
@@ -45,7 +47,7 @@ export class UserService {
    * @param user
    */
   async register(user: CreateUserDto): Promise<string> {
-    const captchaKey = `captcha_${user.email}`;
+    const captchaKey = `${CAPTCHA_KEY.user_register}${user.email}`;
     const captcha = await this.redisService.get(captchaKey);
 
     if (!captcha) {
@@ -97,7 +99,7 @@ export class UserService {
     });
 
     if (!existUser) {
-      throw new ErrorException(USER_NOT_EXIST, '用户不存在');
+      throw new UserNotExistError();
     }
 
     if (existUser.isFrozen) {
@@ -137,10 +139,32 @@ export class UserService {
       relations: ['roles', 'roles.permissions'],
     });
     if (!existUser) {
-      throw new ErrorException(USER_NOT_EXIST, '用户不存在');
+      throw new UserNotExistError();
     }
 
     return convertUserPayLoad(existUser);
+  }
+
+  /**
+   * 修改用户基础信息
+   * @param id
+   * @param nextBaseInfo
+   */
+  async updateUserBaseInfo(id: number, nextBaseInfo: UpdateBaseUserInfoDto) {
+    const existUser = await this.userRepository.findOne({ where: { id } });
+    if (!existUser) {
+      throw new UserNotExistError();
+    }
+    const phone = nextBaseInfo.phone ?? existUser.phone;
+    const nickName = nextBaseInfo.nickname ?? existUser.nickName;
+    const avatar = nextBaseInfo.avatar ?? existUser.avatar;
+    const nextUser: User = { ...existUser, phone, nickName, avatar };
+    const [err] = await to(this.userRepository.save(nextUser));
+    if (err) {
+      throw new ErrorException(COMMON_ERR, '更新用户信息异常: ' + err.message);
+    }
+
+    return '修改用户基础信息成功';
   }
 
   /**

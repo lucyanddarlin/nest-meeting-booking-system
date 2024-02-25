@@ -4,6 +4,7 @@ import { RedisService } from 'src/redis/redis.service';
 import {
   CAPTCHA_END_INDEX,
   CAPTCHA_EXPIRE_TIME,
+  CAPTCHA_KEY,
   CAPTCHA_START_INDEX,
 } from 'src/constants/captcha';
 
@@ -16,7 +17,7 @@ export class CaptchaController {
 
   @Get('email')
   async getEmailCaptcha(@Query('address') address: string) {
-    const captchaKey = `captcha_${address}`;
+    const captchaKey = `${CAPTCHA_KEY.user_register}${address}`;
     const code = Math.random()
       .toString()
       .slice(CAPTCHA_START_INDEX, CAPTCHA_END_INDEX);
