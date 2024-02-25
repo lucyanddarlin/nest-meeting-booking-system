@@ -11,6 +11,9 @@ import { Permission } from './user/entities/permission.entity';
 import { RedisModule } from './redis/redis.module';
 import { CaptchaModule } from './captcha/captcha.module';
 import { AuthModule } from './auth/auth.module';
+import { DemoModule } from './demo/demo.module';
+import { APP_GUARD } from '@nestjs/core';
+import { LoginGuard } from './guard/login.guard';
 
 @Module({
   imports: [
@@ -57,8 +60,15 @@ import { AuthModule } from './auth/auth.module';
     RedisModule,
     CaptchaModule,
     AuthModule,
+    DemoModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: LoginGuard,
+    },
+  ],
 })
 export class AppModule {}
