@@ -116,21 +116,7 @@ export class UserService {
       throw new ErrorException(USER_PASSWORD_INCORRECT, '密码错误');
     }
 
-    const payload: PayLoad = {
-      id: existUser.id,
-      isAdmin: existUser.isAdmin,
-      username: existUser.username,
-      roles: existUser.roles.map((r) => r.name),
-      permissions: existUser.roles.reduce<Permission[]>((arr, cur) => {
-        cur.permissions.forEach((permission) => {
-          const exist = arr.find((p) => p.code === permission.code);
-          if (!exist) {
-            arr.push(permission);
-          }
-        });
-        return arr;
-      }, []),
-    };
+    const payload = convertUserPayLoad(existUser);
 
     const vo = new LoginVo();
     vo.accessToken = this.authService.generateAccessToken(payload);
@@ -153,24 +139,8 @@ export class UserService {
     if (!existUser) {
       throw new ErrorException(USER_NOT_EXIST, '用户不存在');
     }
-    // TODO: 抽离
-    const payload: PayLoad = {
-      id: existUser.id,
-      isAdmin: existUser.isAdmin,
-      username: existUser.username,
-      roles: existUser.roles.map((r) => r.name),
-      permissions: existUser.roles.reduce<Permission[]>((arr, cur) => {
-        cur.permissions.forEach((permission) => {
-          const exist = arr.find((p) => p.code === permission.code);
-          if (!exist) {
-            arr.push(permission);
-          }
-        });
-        return arr;
-      }, []),
-    };
 
-    return payload;
+    return convertUserPayLoad(existUser);
   }
 
   /**
@@ -242,3 +212,21 @@ export class UserService {
     return 'init successfully';
   }
 }
+
+const convertUserPayLoad = (user: User): PayLoad => {
+  return {
+    id: user.id,
+    isAdmin: user.isAdmin,
+    username: user.username,
+    roles: user.roles.map((r) => r.name),
+    permissions: user.roles.reduce<Permission[]>((arr, cur) => {
+      cur.permissions.forEach((permission) => {
+        const exist = arr.find((p) => p.code === permission.code);
+        if (!exist) {
+          arr.push(permission);
+        }
+      });
+      return arr;
+    }, []),
+  };
+};
