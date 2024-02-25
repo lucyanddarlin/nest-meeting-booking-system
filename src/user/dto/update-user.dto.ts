@@ -1,6 +1,8 @@
 import {
+  IsBoolean,
   IsMobilePhone,
   IsNotEmpty,
+  IsOptional,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -34,4 +36,10 @@ export class updateUserPasswordDto {
   @IsNotEmpty({ message: 'password cannot be empty' })
   @MinLength(6, { message: "password's length should more than 6" })
   newPasswordConfirm: string;
+}
+
+export class updateUserStatusDto {
+  @IsBoolean({ message: 'isFrozen should be boolean' })
+  @IsOptional()
+  isFrozen?: boolean;
 }

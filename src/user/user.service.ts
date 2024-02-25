@@ -22,12 +22,16 @@ import { LoginUserDto, LoginVo, PayLoad } from './dto/login-user.dto';
 import {
   UpdateBaseUserInfoDto,
   updateUserPasswordDto,
+  updateUserStatusDto,
 } from './dto/update-user.dto';
 import {
   UserNotExistError,
   UserPasswordInCorrect,
 } from 'src/common/exceptions/common/user.exceptions';
 import { CAPTCHA_KEY } from 'src/constants/captcha';
+import { paginateRawAndEntities } from 'nestjs-typeorm-paginate';
+import { getPaginationOptions } from 'src/utils/paginate';
+import { UserListVo } from './vo/user-list.vo';
 
 @Injectable()
 export class UserService {
@@ -217,6 +221,50 @@ export class UserService {
     );
 
     return '修改用户密码成功';
+  }
+
+  /**
+   * 修改用户的冻结状态
+   * @param id
+   * @param isFrozen
+   */
+  async updateUserStatus(id: number, statusObj: updateUserStatusDto) {
+    const existUser = await this.userRepository.findOne({ where: { id } });
+    if (!existUser) {
+      return new UserNotExistError();
+    }
+
+    const [err] = await to(
+      this.userRepository.save({
+        ...existUser,
+        isFrozen: statusObj.isFrozen,
+      }),
+    );
+    if (err) {
+      throw new ErrorException(COMMON_ERR, '操作异常');
+    }
+
+    return '操作成功';
+  }
+
+  /**
+   * 获取用户分页列表 (按照 UpdatedAt 进行排序)
+   * @param page
+   * @param limit
+   */
+  async paginate(page: number, limit: number): Promise<UserListVo> {
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    queryBuilder.orderBy('user.updatedAt', 'DESC');
+    const [paginate] = await paginateRawAndEntities(
+      queryBuilder,
+      getPaginationOptions(page, limit),
+    );
+    const list = paginate.items.map((i) => {
+      return { ...i, password: undefined };
+    });
+
+    // FIXME: meta is null
+    return { list, meta: paginate.meta };
   }
 
   /**

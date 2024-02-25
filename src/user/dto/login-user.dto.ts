@@ -23,6 +23,7 @@ export type UserInfo = Merge<
 
 export interface PayLoad extends Partial<UserInfo> {}
 
+// TODO: 迁移至 vo 目录
 export class LoginVo {
   accessToken: string;
 

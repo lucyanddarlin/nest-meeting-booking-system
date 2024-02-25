@@ -29,8 +29,8 @@ export class AuthService {
   /**
    * 验证密码
    */
-  async verifyPassword(pwd: string, hasPwd: string): Promise<boolean> {
-    return await bcrypt.compare(pwd, hasPwd);
+  async verifyPassword(pwd: string, hashPwd: string): Promise<boolean> {
+    return await bcrypt.compare(pwd, hashPwd);
   }
 
   /**
