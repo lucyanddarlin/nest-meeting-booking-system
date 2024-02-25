@@ -10,7 +10,7 @@ import {
 import { DemoService } from './demo.service';
 import { CreateDemoDto } from './dto/create-demo.dto';
 import { UpdateDemoDto } from './dto/update-demo.dto';
-import { Permission } from 'src/decorator/permission.decorator';
+import { PayloadUser } from 'src/decorator/userinfo.decorator';
 
 @Controller('demo')
 export class DemoController {
@@ -22,8 +22,7 @@ export class DemoController {
   }
 
   @Get()
-  @Permission('admin')
-  findAll() {
+  findAll(@PayloadUser('id') _id: number) {
     return this.demoService.findAll();
   }
 
