@@ -9,10 +9,13 @@ export const USER_PASSWORD_INCORRECT = 10005;
 export const USER_IS_FROZEN = 10006;
 
 // token 相关错误
-export const TOKEN_INVALID = 10007;
-export const TOKEN_MISSING = 10008;
-export const TOKEN_INCORRECT_FORMAT = 10009;
-export const TOKEN_VERIFY_FAIL = 10010;
+export const TOKEN_INVALID = 20001;
+export const TOKEN_MISSING = 20002;
+export const TOKEN_INCORRECT_FORMAT = 20003;
+export const TOKEN_VERIFY_FAIL = 20004;
 
 // permission 相关错误
-export const PERMISSION_MISSING = 10011;
+export const PERMISSION_MISSING = 30001;
+
+// password 相关错误
+export const PASSWORD_NOT_CONFIRM = 40001;

@@ -8,6 +8,7 @@ import { ErrorException } from 'src/common/exceptions/error.exceptions.filter';
 import {
   CAPTCHA_INCORRECT,
   CAPTCHA_NOT_EXIST,
+  PASSWORD_NOT_CONFIRM,
   TOKEN_INVALID,
   USER_IS_FROZEN,
   USER_NAME_EXIST,
@@ -19,7 +20,10 @@ import { AuthService } from 'src/auth/auth.service';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { LoginUserDto, LoginVo, PayLoad } from './dto/login-user.dto';
-import { UpdateBaseUserInfoDto } from './dto/update-user.dto';
+import {
+  UpdateBaseUserInfoDto,
+  updateUserPasswordDto,
+} from './dto/update-user.dto';
 import { UserNotExistError } from 'src/common/exceptions/common/user.exceptions';
 import { CAPTCHA_KEY } from 'src/constants/captcha';
 
@@ -165,6 +169,52 @@ export class UserService {
     }
 
     return '修改用户基础信息成功';
+  }
+
+  /**
+   * 修改用户密码
+   * @param id
+   * @param pwdObj
+   */
+  async updateUserPassword(id: number, pwdObj: updateUserPasswordDto) {
+    if (pwdObj.newPassword !== pwdObj.newPasswordConfirm) {
+      throw new ErrorException(PASSWORD_NOT_CONFIRM, '密码不一致');
+    }
+    const existUser = await this.userRepository.findOne({ where: { id } });
+    if (!existUser) {
+      throw new UserNotExistError();
+    }
+
+    const captchaCode = await this.redisService.get(
+      `${CAPTCHA_KEY.update_password}${existUser.email}`,
+    );
+    if (!captchaCode) {
+      throw new ErrorException(CAPTCHA_NOT_EXIST, '验证码无效');
+    }
+
+    const verifyPassword = await this.authService.verifyPassword(
+      pwdObj.oldPassword,
+      existUser.password,
+    );
+    if (!verifyPassword) {
+      throw new ErrorException(USER_PASSWORD_INCORRECT, '旧用户密码错误');
+    }
+
+    const password = await this.authService.hashPassword(pwdObj.newPassword);
+
+    const [err] = await to(
+      this.userRepository.save({ ...existUser, password }),
+    );
+
+    if (err) {
+      throw new ErrorException(COMMON_ERR, '修改密码异常');
+    }
+
+    await this.redisService.del(
+      `${CAPTCHA_KEY.update_password}${existUser.email}`,
+    );
+
+    return '修改用户密码成功';
   }
 
   /**

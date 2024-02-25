@@ -7,6 +7,7 @@ import {
   CAPTCHA_KEY,
   CAPTCHA_START_INDEX,
 } from 'src/constants/captcha';
+import { Public } from 'src/decorator/public.decorator';
 
 @Controller('captcha')
 export class CaptchaController {
@@ -15,9 +16,10 @@ export class CaptchaController {
   @Inject(RedisService)
   private readonly redisService: RedisService;
 
-  @Get('email')
-  async getEmailCaptcha(@Query('address') address: string) {
-    const captchaKey = `${CAPTCHA_KEY.user_register}${address}`;
+  @Public()
+  @Get('email/register')
+  async getRegisterCaptcha(@Query('to') to: string) {
+    const captchaKey = `${CAPTCHA_KEY.user_register}${to}`;
     const code = Math.random()
       .toString()
       .slice(CAPTCHA_START_INDEX, CAPTCHA_END_INDEX);
@@ -26,11 +28,30 @@ export class CaptchaController {
     await this.redisService.set(captchaKey, code, CAPTCHA_EXPIRE_TIME);
 
     await this.captchaService.sendEmailCaptcha({
-      to: address,
+      to: to,
       subject: '注册验证码',
       html: `<p>你的验证码是: ${code}</p>`,
     });
 
-    return 'success';
+    return '发送成功';
+  }
+
+  @Get('email/password/update')
+  async getUpdatePasswordCaptcha(@Query('to') to: string) {
+    const captchaKey = `${CAPTCHA_KEY.update_password}${to}`;
+    const code = Math.random()
+      .toString()
+      .slice(CAPTCHA_START_INDEX, CAPTCHA_END_INDEX);
+
+    await this.redisService.del(captchaKey);
+    await this.redisService.set(captchaKey, code, CAPTCHA_EXPIRE_TIME);
+
+    await this.captchaService.sendEmailCaptcha({
+      to: to,
+      subject: '修改密码',
+      html: `<p>你的验证码是: ${code}</p>`,
+    });
+
+    return '发送成功';
   }
 }

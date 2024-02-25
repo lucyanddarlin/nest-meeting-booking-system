@@ -3,7 +3,10 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Public } from 'src/decorator/public.decorator';
-import { UpdateBaseUserInfoDto } from './dto/update-user.dto';
+import {
+  UpdateBaseUserInfoDto,
+  updateUserPasswordDto,
+} from './dto/update-user.dto';
 import { PayloadUser } from 'src/decorator/userinfo.decorator';
 
 @Controller('user')
@@ -34,6 +37,14 @@ export class UserController {
     @Body() baseUserInfo: UpdateBaseUserInfoDto,
   ) {
     return this.userService.updateUserBaseInfo(id, baseUserInfo);
+  }
+
+  @Post('password/update')
+  updateUserPassword(
+    @PayloadUser('id') id: number,
+    @Body() pwdObj: updateUserPasswordDto,
+  ) {
+    return this.userService.updateUserPassword(id, pwdObj);
   }
 
   @Public()

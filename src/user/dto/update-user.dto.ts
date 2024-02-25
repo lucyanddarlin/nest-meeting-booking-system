@@ -1,4 +1,9 @@
-import { IsMobilePhone, MaxLength } from 'class-validator';
+import {
+  IsMobilePhone,
+  IsNotEmpty,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class UpdateBaseUserInfoDto {
   @MaxLength(15, { message: 'nickname is too long' })
@@ -12,4 +17,21 @@ export class UpdateBaseUserInfoDto {
   phone?: string;
 
   avatar?: string;
+}
+
+export class updateUserPasswordDto {
+  @IsNotEmpty({ message: 'captcha cannot not be null' })
+  captcha: string;
+
+  @IsNotEmpty({ message: 'password cannot be empty' })
+  @MinLength(6, { message: "password's length should more than 6" })
+  oldPassword: string;
+
+  @IsNotEmpty({ message: 'password cannot be empty' })
+  @MinLength(6, { message: "password's length should more than 6" })
+  newPassword: string;
+
+  @IsNotEmpty({ message: 'password cannot be empty' })
+  @MinLength(6, { message: "password's length should more than 6" })
+  newPasswordConfirm: string;
 }
