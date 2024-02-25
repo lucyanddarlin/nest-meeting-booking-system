@@ -8,6 +8,7 @@ import { ErrorException } from 'src/common/exceptions/error.exceptions.filter';
 import {
   CAPTCHA_INCORRECT,
   CAPTCHA_NOT_EXIST,
+  TOKEN_INVALID,
   USER_IS_FROZEN,
   USER_NAME_EXIST,
   USER_NOT_EXIST,
@@ -117,6 +118,7 @@ export class UserService {
 
     const payload: PayLoad = {
       id: existUser.id,
+      isAdmin: existUser.isAdmin,
       username: existUser.username,
       roles: existUser.roles.map((r) => r.name),
       permissions: existUser.roles.reduce<Permission[]>((arr, cur) => {
@@ -135,6 +137,64 @@ export class UserService {
     vo.refreshToken = this.authService.generateRefreshToken(payload);
 
     return vo;
+  }
+
+  /**
+   * 根据 id 查询用户 (包含对应的角色和权限)
+   */
+  async findUserById(id: number, isAdmin: boolean): Promise<PayLoad> {
+    const existUser = await this.userRepository.findOne({
+      where: {
+        id,
+        isAdmin,
+      },
+      relations: ['roles', 'roles.permissions'],
+    });
+    if (!existUser) {
+      throw new ErrorException(USER_NOT_EXIST, '用户不存在');
+    }
+    // TODO: 抽离
+    const payload: PayLoad = {
+      id: existUser.id,
+      isAdmin: existUser.isAdmin,
+      username: existUser.username,
+      roles: existUser.roles.map((r) => r.name),
+      permissions: existUser.roles.reduce<Permission[]>((arr, cur) => {
+        cur.permissions.forEach((permission) => {
+          const exist = arr.find((p) => p.code === permission.code);
+          if (!exist) {
+            arr.push(permission);
+          }
+        });
+        return arr;
+      }, []),
+    };
+
+    return payload;
+  }
+
+  /**
+   * 处理 refresh token
+   */
+  async handleRefreshToken(refreshToken: string): Promise<LoginVo> {
+    try {
+      const verifyData = this.authService.verifyRefreshToken(refreshToken);
+      const existUser = await this.findUserById(
+        verifyData.userId,
+        verifyData.isAdmin,
+      );
+
+      return {
+        accessToken: this.authService.generateAccessToken(existUser),
+        refreshToken: this.authService.generateRefreshToken(existUser),
+      };
+    } catch (error) {
+      throw new ErrorException(
+        TOKEN_INVALID,
+        'token 无效: ' + error.message ?? '',
+        HttpStatus.FORBIDDEN,
+      );
+    }
   }
 
   /**

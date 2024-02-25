@@ -7,3 +7,6 @@ export const USER_NAME_EXIST = 10003;
 export const USER_NOT_EXIST = 10004;
 export const USER_PASSWORD_INCORRECT = 10005;
 export const USER_IS_FROZEN = 10006;
+
+// token 相关错误
+export const TOKEN_INVALID = 10007;

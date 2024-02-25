@@ -5,6 +5,11 @@ import * as bcrypt from 'bcrypt';
 import { SALT_ROUND } from 'src/constants/auth';
 import { PayLoad } from 'src/user/dto/login-user.dto';
 
+interface VerifyRefreshTokenResult {
+  userId: number;
+  isAdmin: boolean;
+}
+
 @Injectable()
 export class AuthService {
   @Inject(JwtService)
@@ -35,6 +40,7 @@ export class AuthService {
     const accessToken = this.jwtService.sign(
       {
         id: payLoad.id,
+        isAdmin: payLoad.isAdmin,
         username: payLoad.username,
         roles: payLoad.roles,
         permissions: payLoad.permissions,
@@ -55,6 +61,7 @@ export class AuthService {
     const refreshToken = this.jwtService.sign(
       {
         id: payLoad.id,
+        isAdmin: payLoad.isAdmin,
       },
       {
         expiresIn: this.configService.get('jwt_refresh_exp') ?? '5d',
@@ -62,5 +69,15 @@ export class AuthService {
     );
 
     return refreshToken;
+  }
+
+  /**
+   * 验证 refreshToken
+   */
+  verifyRefreshToken(refreshToken: string): VerifyRefreshTokenResult {
+    const verifyData =
+      this.jwtService.verify<VerifyRefreshTokenResult>(refreshToken);
+
+    return verifyData;
   }
 }
