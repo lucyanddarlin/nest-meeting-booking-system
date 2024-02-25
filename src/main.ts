@@ -5,6 +5,7 @@ import { BaseExceptionsFilter } from './common/exceptions/base.exceptions.filter
 import { ConfigService } from '@nestjs/config';
 import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter';
 import { TransformInterceptor } from './common/interceptor/transform.interceptor';
+import { setupDocument } from './utils/documents';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,9 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   // 获取配置项
   const configService = app.get(ConfigService);
+
+  // 启用 swagger 文档
+  setupDocument(app);
 
   await app.listen(configService.get('nest_server_port'));
 }

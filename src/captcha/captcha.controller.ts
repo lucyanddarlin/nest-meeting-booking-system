@@ -8,7 +8,9 @@ import {
   CAPTCHA_START_INDEX,
 } from 'src/constants/captcha';
 import { Public } from 'src/decorator/public.decorator';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags(' 验证码模块')
 @Controller('captcha')
 export class CaptchaController {
   constructor(private readonly captchaService: CaptchaService) {}
@@ -16,6 +18,7 @@ export class CaptchaController {
   @Inject(RedisService)
   private readonly redisService: RedisService;
 
+  @ApiOperation({ summary: '获取注册验证码' })
   @Public()
   @Get('email/register')
   async getRegisterCaptcha(@Query('to') to: string) {
@@ -36,6 +39,7 @@ export class CaptchaController {
     return '发送成功';
   }
 
+  @ApiOperation({ summary: '获取修改密码验证码' })
   @Get('email/password/update')
   async getUpdatePasswordCaptcha(@Query('to') to: string) {
     const captchaKey = `${CAPTCHA_KEY.update_password}${to}`;
