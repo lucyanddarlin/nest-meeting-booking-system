@@ -22,9 +22,11 @@ export class HttpExceptionsFilter implements ExceptionFilter {
     if (typeof error === 'string') {
       return error;
     } else if (typeof error === 'object') {
-      return error.message?.join
-        ? error.message.join(',')
-        : error.message || '';
+      if (Array.isArray(error.message)) {
+        // return error.message.join(',');
+        return error.message[0];
+      }
+      return error.message || '';
     }
 
     return '';
