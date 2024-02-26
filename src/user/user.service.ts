@@ -18,7 +18,7 @@ import { COMMON_ERR } from 'src/constants/error/common';
 import { AuthService } from 'src/auth/auth.service';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
-import { LoginUserDto, LoginVo, PayLoad } from './dto/login-user.dto';
+import { LoginUserDto, PayLoad } from './dto/login-user.dto';
 import {
   UpdateBaseUserInfoDto,
   updateUserPasswordDto,
@@ -32,6 +32,7 @@ import { CAPTCHA_KEY } from 'src/constants/captcha';
 import { paginateRawAndEntities } from 'nestjs-typeorm-paginate';
 import { getPaginationOptions } from 'src/utils/paginate';
 import { UserListVo } from './vo/user-list.vo';
+import { LoginVo } from './vo/user-login.vo';
 
 @Injectable()
 export class UserService {

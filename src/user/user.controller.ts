@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto, LoginVo } from './dto/login-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import { Public } from 'src/decorator/public.decorator';
 import {
   UpdateBaseUserInfoDto,
@@ -20,6 +20,7 @@ import {
 import { PayloadUser } from 'src/decorator/userinfo.decorator';
 import { defaultPaginationParams } from 'src/constants/paginate';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LoginVo } from './vo/user-login.vo';
 
 @ApiTags('用户管理模块')
 @Controller('user')

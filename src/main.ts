@@ -10,12 +10,10 @@ async function bootstrap() {
   app.enableCors();
   // 全局 DTO 参数校验
   app.useGlobalPipes(new ValidationPipe());
-  // 获取配置项
-  const configService = app.get(ConfigService);
 
   // 启用 swagger 文档
   setupDocument(app);
 
-  await app.listen(configService.get('nest_server_port'));
+  await app.listen(app.get(ConfigService).get('nest_server_port'));
 }
 bootstrap();
