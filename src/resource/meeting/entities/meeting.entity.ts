@@ -20,6 +20,9 @@ export class Meeting {
   @Column({ length: 50, default: '', comment: 'equipment' })
   equipment: string;
 
+  @Column({ length: 50, default: '', comment: 'location' })
+  location: string;
+
   @Column({ length: 100, default: '', comment: 'description' })
   description: string;
 

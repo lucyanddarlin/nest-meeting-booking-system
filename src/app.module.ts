@@ -28,6 +28,7 @@ import { TransformInterceptor } from './common/interceptor/transform.interceptor
 import { BaseExceptionsFilter } from './common/exceptions/base.exceptions.filter';
 import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter';
 import { MeetingModule } from './resource/meeting/meeting.module';
+import { Meeting } from './resource/meeting/entities/meeting.entity';
 
 @Module({
   imports: [
@@ -102,7 +103,7 @@ import { MeetingModule } from './resource/meeting/meeting.module';
           connectorPackage: 'mysql2',
           synchronize: true,
           logging: true,
-          entities: [User, Role, Permission],
+          entities: [User, Role, Permission, Meeting],
           extra: {
             authPlugin: 'sha256_password',
           },
