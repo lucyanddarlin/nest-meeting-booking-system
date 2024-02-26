@@ -38,10 +38,10 @@ export class User {
   @Column({ default: false, comment: 'is_frozen' })
   isFrozen: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at', comment: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at', comment: 'updated_at' })
   updatedAt: Date;
 
   @ManyToMany(() => Role)
