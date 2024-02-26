@@ -19,7 +19,7 @@ import { Permission } from './resource/user/entities/permission.entity';
 import { RedisModule } from './resource/redis/redis.module';
 import { CaptchaModule } from './resource/captcha/captcha.module';
 import { AuthModule } from './resource/auth/auth.module';
-import { DemoModule } from './demo/demo.module';
+import { DemoModule } from './resource/demo/demo.module';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoginGuard } from './guard/login.guard';
 import { PermissionGuard } from './guard/permission.guard';
