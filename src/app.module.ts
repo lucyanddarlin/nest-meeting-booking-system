@@ -1,7 +1,15 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
+import 'winston-daily-rotate-file';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -12,16 +20,59 @@ import { RedisModule } from './redis/redis.module';
 import { CaptchaModule } from './captcha/captcha.module';
 import { AuthModule } from './auth/auth.module';
 import { DemoModule } from './demo/demo.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoginGuard } from './guard/login.guard';
 import { PermissionGuard } from './guard/permission.guard';
+import LogMiddleware from './middleware/log';
+import { TransformInterceptor } from './common/interceptor/transform.interceptor';
+import { BaseExceptionsFilter } from './common/exceptions/base.exceptions.filter';
+import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter';
 
 @Module({
   imports: [
-    // 引入配置
+    // 引入全局配置
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: 'src/.env',
+    }),
+    WinstonModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory(configService: ConfigService) {
+        return {
+          transports: [
+            new winston.transports.DailyRotateFile({
+              level: 'info',
+              dirname: configService.get('winston_info_dir'),
+              filename: '%DATE%.log',
+              datePattern: 'YYYY-MM-DD',
+              zippedArchive: true,
+              maxSize: configService.get('winston_max_sizes'),
+              maxFiles: configService.get('winston_max_files'),
+              format: winston.format.combine(
+                winston.format.timestamp({
+                  format: 'YYYY-MM-DD HH:mm:ss',
+                }),
+                winston.format.json(),
+              ),
+            }),
+            new winston.transports.DailyRotateFile({
+              level: 'error',
+              dirname: configService.get('winston_error_dir'),
+              filename: '%DATE%.log',
+              datePattern: 'YYYY-MM-DD',
+              zippedArchive: true,
+              maxSize: configService.get('winston_max_sizes'),
+              maxFiles: configService.get('winston_max_files'),
+              format: winston.format.combine(
+                winston.format.timestamp({
+                  format: 'YYYY-MM-DD HH:mm:ss',
+                }),
+                winston.format.json(),
+              ),
+            }),
+          ],
+        };
+      },
     }),
     // 引入 jwt
     JwtModule.registerAsync({
@@ -74,6 +125,24 @@ import { PermissionGuard } from './guard/permission.guard';
       provide: APP_GUARD,
       useClass: PermissionGuard,
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: BaseExceptionsFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionsFilter,
+    },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LogMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}

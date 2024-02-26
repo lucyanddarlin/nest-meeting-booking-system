@@ -6,14 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  Inject,
 } from '@nestjs/common';
 import { DemoService } from './demo.service';
 import { CreateDemoDto } from './dto/create-demo.dto';
 import { UpdateDemoDto } from './dto/update-demo.dto';
-import { PayloadUser } from 'src/decorator/userinfo.decorator';
+import { Public } from 'src/decorator/public.decorator';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
+import { ErrorException } from 'src/common/exceptions/error.exceptions.filter';
 
 @Controller('demo')
 export class DemoController {
+  @Inject(WINSTON_MODULE_PROVIDER)
+  private readonly logger: Logger;
+
   constructor(private readonly demoService: DemoService) {}
 
   @Post()
@@ -21,8 +28,10 @@ export class DemoController {
     return this.demoService.create(createDemoDto);
   }
 
+  @Public()
   @Get()
-  findAll(@PayloadUser('id') _id: number) {
+  findAll() {
+    throw new ErrorException('11', 'demo error test');
     return this.demoService.findAll();
   }
 
