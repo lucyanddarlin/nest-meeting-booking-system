@@ -12,13 +12,13 @@ import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { User } from './user/entities/user.entity';
-import { Role } from './user/entities/role.entity';
-import { Permission } from './user/entities/permission.entity';
-import { RedisModule } from './redis/redis.module';
-import { CaptchaModule } from './captcha/captcha.module';
-import { AuthModule } from './auth/auth.module';
+import { UserModule } from './resource/user/user.module';
+import { User } from './resource/user/entities/user.entity';
+import { Role } from './resource/user/entities/role.entity';
+import { Permission } from './resource/user/entities/permission.entity';
+import { RedisModule } from './resource/redis/redis.module';
+import { CaptchaModule } from './resource/captcha/captcha.module';
+import { AuthModule } from './resource/auth/auth.module';
 import { DemoModule } from './demo/demo.module';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoginGuard } from './guard/login.guard';
@@ -27,6 +27,7 @@ import LogMiddleware from './middleware/log';
 import { TransformInterceptor } from './common/interceptor/transform.interceptor';
 import { BaseExceptionsFilter } from './common/exceptions/base.exceptions.filter';
 import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter';
+import { MeetingModule } from './resource/meeting/meeting.module';
 
 @Module({
   imports: [
@@ -113,6 +114,7 @@ import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter
     CaptchaModule,
     AuthModule,
     DemoModule,
+    MeetingModule,
   ],
   controllers: [AppController],
   providers: [

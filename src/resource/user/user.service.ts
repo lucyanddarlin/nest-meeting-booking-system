@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from 'src/resource/redis/redis.service';
 import { ErrorException } from 'src/common/exceptions/error.exceptions.filter';
 import {
   CAPTCHA_INCORRECT,
@@ -15,7 +15,7 @@ import {
 } from 'src/constants/error/user';
 import to from 'src/utils/to';
 import { COMMON_ERR } from 'src/constants/error/common';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from 'src/resource/auth/auth.service';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { LoginUserDto, PayLoad } from './dto/login-user.dto';

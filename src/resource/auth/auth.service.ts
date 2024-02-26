@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { SALT_ROUND } from 'src/constants/auth';
-import { PayLoad } from 'src/user/dto/login-user.dto';
+import { PayLoad } from 'src/resource/user/dto/login-user.dto';
 
 interface VerifyRefreshTokenResult {
   userId: number;

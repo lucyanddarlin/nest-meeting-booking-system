@@ -9,7 +9,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { PUBLIC_KEY } from 'src/decorator/public.decorator';
-import { PayLoad } from 'src/user/dto/login-user.dto';
+import { PayLoad } from 'src/resource/user/dto/login-user.dto';
 import { ErrorException } from 'src/common/exceptions/error.exceptions.filter';
 import {
   TOKEN_INCORRECT_FORMAT,

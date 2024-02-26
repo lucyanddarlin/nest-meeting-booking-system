@@ -1,6 +1,6 @@
 import { Controller, Get, Inject, Query } from '@nestjs/common';
 import { CaptchaService } from './captcha.service';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from 'src/resource/redis/redis.service';
 import {
   CAPTCHA_END_INDEX,
   CAPTCHA_EXPIRE_TIME,
