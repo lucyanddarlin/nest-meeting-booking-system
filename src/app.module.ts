@@ -29,6 +29,7 @@ import { BaseExceptionsFilter } from './common/exceptions/base.exceptions.filter
 import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter';
 import { MeetingModule } from './resource/meeting/meeting.module';
 import { Meeting } from './resource/meeting/entities/meeting.entity';
+import { EquipmentModule } from './resource/equipment/equipment.module';
 
 @Module({
   imports: [
@@ -116,6 +117,7 @@ import { Meeting } from './resource/meeting/entities/meeting.entity';
     AuthModule,
     DemoModule,
     MeetingModule,
+    EquipmentModule,
   ],
   controllers: [AppController],
   providers: [

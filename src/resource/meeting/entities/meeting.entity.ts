@@ -1,12 +1,15 @@
+import { Equipment } from 'src/resource/equipment/entities/equipment.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('meeting_room')
 export class Meeting {
   @PrimaryGeneratedColumn()
   id: number;
@@ -14,11 +17,8 @@ export class Meeting {
   @Column({ length: 50, comment: 'meeting_name' })
   name: string;
 
-  @Column({ length: 50, comment: 'meeting_capacity' })
+  @Column({ comment: 'meeting_capacity' })
   capacity: number;
-
-  @Column({ length: 50, default: '', comment: 'equipment' })
-  equipment: string;
 
   @Column({ length: 50, default: '', comment: 'location' })
   location: string;
@@ -34,4 +34,8 @@ export class Meeting {
 
   @UpdateDateColumn({ name: 'updated_at', comment: 'updated_at' })
   updatedAt: Date;
+
+  @JoinTable({ name: 'meeting_equipments' })
+  @ManyToMany(() => Equipment, (e) => e.meetings)
+  equipments: Equipment[];
 }
