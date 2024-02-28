@@ -30,6 +30,7 @@ import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter
 import { MeetingModule } from './resource/meeting/meeting.module';
 import { Meeting } from './resource/meeting/entities/meeting.entity';
 import { EquipmentModule } from './resource/equipment/equipment.module';
+import { Equipment } from './resource/equipment/entities/equipment.entity';
 
 @Module({
   imports: [
@@ -104,7 +105,7 @@ import { EquipmentModule } from './resource/equipment/equipment.module';
           connectorPackage: 'mysql2',
           synchronize: true,
           logging: true,
-          entities: [User, Role, Permission, Meeting],
+          entities: [User, Role, Permission, Meeting, Equipment],
           extra: {
             authPlugin: 'sha256_password',
           },
