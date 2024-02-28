@@ -42,8 +42,8 @@ export class MeetingService {
     room3.equipments = [equipment1, equipment2];
 
     try {
-      await this.equipmentRepository.save([equipment1, equipment2]);
-      await this.meetingRepository.save([room1, room2, room3]);
+      await this.equipmentRepository.insert([equipment1, equipment2]);
+      await this.meetingRepository.insert([room1, room2, room3]);
       return '初始化成功';
     } catch (error) {
       throw new ErrorException(COMMON_ERR, '初始化异常: ' + error.message);

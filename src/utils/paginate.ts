@@ -1,19 +1,13 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { MAX_PAGE_SIZE, defaultPaginationParams } from 'src/constants/paginate';
 
 export class CustomPaginationMeta {
-  @ApiProperty()
-  public readonly pageSize: number;
-  @ApiProperty()
-  public readonly currentPage: number;
-  @ApiProperty()
-  public readonly totalCounts: number;
-  @ApiProperty()
-  public readonly totalPages: number;
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-  constructor(pageSize, currentPage, totalCounts, totalPage) {}
+  constructor(
+    public readonly limit: number,
+    public readonly currentPage: number,
+    public readonly totalCounts: number,
+    public readonly totalPages: number,
+  ) {}
 }
 
 export const getPaginationOptions = (
@@ -26,6 +20,7 @@ export const getPaginationOptions = (
     page,
     limit,
     metaTransformer(meta): CustomPaginationMeta {
+      console.log('metaTransformer', meta);
       return new CustomPaginationMeta(
         meta.itemCount,
         meta.currentPage,
