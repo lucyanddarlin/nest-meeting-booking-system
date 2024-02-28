@@ -1,4 +1,3 @@
-import { Meeting } from 'src/resource/meeting/entities/meeting.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,6 +6,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Meeting } from 'src/resource/meeting/entities/meeting.entity';
+
+export enum EquipmentState {
+  ok,
+  broken,
+  Repairing,
+}
 
 @Entity('equipment')
 export class Equipment {
@@ -21,6 +27,9 @@ export class Equipment {
 
   @Column({ default: 50, comment: 'available_quantity' })
   availableQuantity: number;
+
+  @Column({ type: 'enum', enum: EquipmentState, default: EquipmentState.ok })
+  state: EquipmentState;
 
   @CreateDateColumn({ name: 'created_at', comment: 'created_at' })
   createdAt: Date;

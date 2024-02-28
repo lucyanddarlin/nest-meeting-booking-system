@@ -256,12 +256,10 @@ export class UserService {
   async paginate(page: number, limit: number): Promise<UserListVo> {
     const queryBuilder = this.userRepository.createQueryBuilder('user');
     queryBuilder.orderBy('user.updatedAt', 'DESC');
-    console.log(getPaginationOptions(page, limit));
     const [paginate] = await paginateRawAndEntities(
       queryBuilder,
       getPaginationOptions(page, limit),
     );
-    console.log(paginate);
     const list = paginate.items.map((i) => {
       return { ...i, password: undefined };
     });

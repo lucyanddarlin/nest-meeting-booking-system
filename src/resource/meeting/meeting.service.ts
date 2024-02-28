@@ -5,6 +5,9 @@ import { Meeting } from './entities/meeting.entity';
 import { Equipment } from '../equipment/entities/equipment.entity';
 import { ErrorException } from 'src/common/exceptions/error.exceptions.filter';
 import { COMMON_ERR } from 'src/constants/error/common';
+import { paginateRawAndEntities } from 'nestjs-typeorm-paginate';
+import { getPaginationOptions } from 'src/utils/paginate';
+import { MeetingListVo } from './vo/meeting-list.vo';
 
 @Injectable()
 export class MeetingService {
@@ -13,6 +16,25 @@ export class MeetingService {
 
   @InjectRepository(Equipment)
   private readonly equipmentRepository: Repository<Equipment>;
+
+  /**
+   * 用户会议室分页列表 (按照 UpdatedAt 进行排序)
+   * @param page
+   * @param limit
+   */
+  async paginate(page: number, limit: number): Promise<MeetingListVo> {
+    const queryBuilder = this.meetingRepository.createQueryBuilder('meeting');
+    queryBuilder
+      .leftJoinAndSelect('meeting.equipments', 'equipment')
+      .orderBy('meeting.updated_at', 'DESC');
+
+    const [paginate] = await paginateRawAndEntities(
+      queryBuilder,
+      getPaginationOptions(page, limit),
+    );
+
+    return { list: paginate.items, meta: paginate.meta };
+  }
 
   async initData() {
     const equipment1 = new Equipment();
@@ -42,8 +64,8 @@ export class MeetingService {
     room3.equipments = [equipment1, equipment2];
 
     try {
-      await this.equipmentRepository.insert([equipment1, equipment2]);
-      await this.meetingRepository.insert([room1, room2, room3]);
+      await this.equipmentRepository.save([equipment1, equipment2]);
+      await this.meetingRepository.save([room1, room2, room3]);
       return '初始化成功';
     } catch (error) {
       throw new ErrorException(COMMON_ERR, '初始化异常: ' + error.message);
