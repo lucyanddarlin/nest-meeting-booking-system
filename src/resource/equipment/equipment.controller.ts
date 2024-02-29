@@ -12,6 +12,7 @@ import { CreateEquipmentDto } from './dto/create-equipment.dto';
 import { Public } from 'src/decorator/public.decorator';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { defaultPaginationParams } from 'src/constants/paginate';
+import { UpdateEquipmentBaseInfoDto } from './dto/update-equipment.dto';
 
 @ApiTags('设备模块')
 @Public()
@@ -23,6 +24,13 @@ export class EquipmentController {
   @Post('create')
   createEquipment(@Body() equipmentDto: CreateEquipmentDto) {
     return this.equipmentService.createEquipment(equipmentDto);
+  }
+
+  @Post('base/update')
+  updateEquipmentBaseInfo(
+    @Body() equipmentBaseInfoDto: UpdateEquipmentBaseInfoDto,
+  ) {
+    return this.equipmentService.updateEquipmentBaseInfo(equipmentBaseInfoDto);
   }
 
   @ApiOperation({ summary: '设备列表分页' })
