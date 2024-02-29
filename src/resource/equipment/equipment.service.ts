@@ -10,12 +10,19 @@ import {
   EQUIPMENT_CODE_EXIST,
   EQUIPMENT_NAME_EXIST,
 } from 'src/constants/error/equipment';
+import { paginateRawAndEntities } from 'nestjs-typeorm-paginate';
+import { getPaginationOptions } from 'src/utils/paginate';
+import { EquipmentListVo } from './vo/equipment-list.vo';
 
 @Injectable()
 export class EquipmentService {
   @InjectRepository(Equipment)
   private readonly equipmentRepository: Repository<Equipment>;
 
+  /**
+   * 创建设备
+   * @param equipmentDto
+   */
   async createEquipment(equipmentDto: CreateEquipmentDto): Promise<string> {
     const existEquipments = await this.equipmentRepository
       .createQueryBuilder('equipment')
@@ -47,5 +54,23 @@ export class EquipmentService {
     }
 
     return '创建成功';
+  }
+
+  /**
+   * 设备列表分页
+   * @param page
+   * @param limit
+   */
+  async paginate(page: number, limit: number): Promise<EquipmentListVo> {
+    const queryBuilder =
+      this.equipmentRepository.createQueryBuilder('equipment');
+    queryBuilder.leftJoinAndSelect('equipment.meetings', 'meetings');
+
+    const [paginate] = await paginateRawAndEntities(
+      queryBuilder,
+      getPaginationOptions(page, limit),
+    );
+
+    return { list: paginate.items, meta: paginate.meta };
   }
 }

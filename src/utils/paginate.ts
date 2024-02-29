@@ -3,7 +3,7 @@ import { MAX_PAGE_SIZE, defaultPaginationParams } from 'src/constants/paginate';
 
 export class CustomPaginationMeta {
   constructor(
-    public readonly limit: number,
+    public readonly counts: number,
     public readonly currentPage: number,
     public readonly totalCounts: number,
     public readonly totalPages: number,
@@ -20,7 +20,6 @@ export const getPaginationOptions = (
     page,
     limit,
     metaTransformer(meta): CustomPaginationMeta {
-      console.log('metaTransformer', meta);
       return new CustomPaginationMeta(
         meta.itemCount,
         meta.currentPage,

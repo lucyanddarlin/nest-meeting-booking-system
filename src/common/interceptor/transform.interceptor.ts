@@ -36,9 +36,9 @@ export class TransformInterceptor<T>
       map((data) => {
         this.logger.info('response', { resData: data, ...getReqMainInfo(req) });
         return {
-          data: data ?? '',
+          data: data ?? {},
           code: 200,
-          message: '',
+          message: 'ok',
         };
       }),
     );
