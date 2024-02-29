@@ -85,7 +85,7 @@ export class UserService {
     nextUser.password = hashPwd;
     nextUser.email = user.email;
 
-    const [err] = await to(this.userRepository.save(nextUser));
+    const [err] = await to(this.userRepository.insert(nextUser));
     if (err) {
       this.logger.error(JSON.stringify(err));
       throw new ErrorException(COMMON_ERR, JSON.stringify(err));
