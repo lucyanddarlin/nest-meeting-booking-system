@@ -12,7 +12,9 @@ import { CreateEquipmentDto } from './dto/create-equipment.dto';
 import { Public } from 'src/decorator/public.decorator';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { defaultPaginationParams } from 'src/constants/paginate';
-import { UpdateEquipmentBaseInfoDto } from './dto/update-equipment.dto';
+import { UpdateEquipmentInfoDto } from './dto/update-equipment.dto';
+import { Permission } from 'src/decorator/permission.decorator';
+import { DeleteEquipmentDto } from './dto/delete-equipment.dto';
 
 @ApiTags('设备模块')
 @Public()
@@ -21,16 +23,24 @@ export class EquipmentController {
   constructor(private readonly equipmentService: EquipmentService) {}
 
   @ApiOperation({ summary: '创建设备' })
+  @Permission('admin')
   @Post('create')
   createEquipment(@Body() equipmentDto: CreateEquipmentDto) {
     return this.equipmentService.createEquipment(equipmentDto);
   }
 
-  @Post('base/update')
-  updateEquipmentBaseInfo(
-    @Body() equipmentBaseInfoDto: UpdateEquipmentBaseInfoDto,
-  ) {
-    return this.equipmentService.updateEquipmentBaseInfo(equipmentBaseInfoDto);
+  @ApiOperation({ summary: '更新设备信息' })
+  @Post('update')
+  @Permission('admin')
+  updateEquipmentInfo(@Body() equipmentInfoDto: UpdateEquipmentInfoDto) {
+    return this.equipmentService.updateEquipmentInfo(equipmentInfoDto);
+  }
+
+  @ApiOperation({ summary: '删除设备 (id)' })
+  @Post('delete')
+  @Permission('admin')
+  deleteEquipment(@Body() deleteEquipmentDto: DeleteEquipmentDto) {
+    return this.equipmentService.deleteEquipment(deleteEquipmentDto.id);
   }
 
   @ApiOperation({ summary: '设备列表分页' })

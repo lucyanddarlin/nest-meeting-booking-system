@@ -14,7 +14,7 @@ import {
 import { paginateRawAndEntities } from 'nestjs-typeorm-paginate';
 import { getPaginationOptions } from 'src/utils/paginate';
 import { EquipmentListVo } from './vo/equipment-list.vo';
-import { UpdateEquipmentBaseInfoDto } from './dto/update-equipment.dto';
+import { UpdateEquipmentInfoDto } from './dto/update-equipment.dto';
 
 @Injectable()
 export class EquipmentService {
@@ -43,7 +43,7 @@ export class EquipmentService {
   }
 
   /**
-   * 检查是否有重复的设备
+   * 检查是否有重复的设备 (name code)
    * @param name
    * @param code
    */
@@ -70,6 +70,22 @@ export class EquipmentService {
           return new ErrorException(EQUIPMENT_CODE_EXIST, '设备 code 已存在');
         }
 
+        return null;
+      },
+    );
+  }
+
+  private async checkExistEquipmentById(
+    id: number | string,
+  ): Promise<ErrorException | null> {
+    return await this._checkExist(
+      'equipment',
+      'equipment.id = :id',
+      { id },
+      (equipments) => {
+        if (equipments.length === 0) {
+          return new ErrorException(EQUIPMENT_NOT_EXIST, '设备不存在');
+        }
         return null;
       },
     );
@@ -104,21 +120,11 @@ export class EquipmentService {
 
   /**
    * 修改设备基础信息
-   * @param equipmentBaseInfoDto
+   * @param equipmentBaseDto
    */
-  async updateEquipmentBaseInfo(
-    equipmentBaseInfoDto: UpdateEquipmentBaseInfoDto,
-  ) {
-    const notExistIdErr = await this._checkExist(
-      'equipment',
-      'equipment.id = :id',
-      { id: equipmentBaseInfoDto.id },
-      (equipments) => {
-        if (equipments.length === 0) {
-          return new ErrorException(EQUIPMENT_NOT_EXIST, '设备不存在');
-        }
-        return null;
-      },
+  async updateEquipmentInfo(equipmentBaseDto: UpdateEquipmentInfoDto) {
+    const notExistIdErr = await this.checkExistEquipmentById(
+      equipmentBaseDto.id,
     );
 
     if (notExistIdErr) {
@@ -126,8 +132,8 @@ export class EquipmentService {
     }
 
     const existErr = await this._checkExistEquipment(
-      equipmentBaseInfoDto.name,
-      equipmentBaseInfoDto.code,
+      equipmentBaseDto.name,
+      equipmentBaseDto.code,
     );
     if (existErr) {
       throw existErr;
@@ -135,12 +141,31 @@ export class EquipmentService {
 
     try {
       await this.equipmentRepository.update(
-        equipmentBaseInfoDto.id,
-        equipmentBaseInfoDto,
+        equipmentBaseDto.id,
+        equipmentBaseDto,
       );
       return '修改成功';
     } catch (error) {
       throw new ErrorException(COMMON_ERR, '修改异常: ' + error.message);
+    }
+  }
+
+  /**
+   * 删除设备 (id)
+   * @param id
+   */
+  async deleteEquipment(id: number | string) {
+    const notExistIdErr = await this.checkExistEquipmentById(id);
+
+    if (notExistIdErr) {
+      throw notExistIdErr;
+    }
+
+    try {
+      await this.equipmentRepository.delete(id);
+      return '删除成功';
+    } catch (error) {
+      throw new ErrorException(COMMON_ERR, '删除异常: ' + error.message);
     }
   }
 
