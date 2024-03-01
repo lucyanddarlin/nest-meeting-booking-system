@@ -31,6 +31,8 @@ import { MeetingModule } from './resource/meeting/meeting.module';
 import { Meeting } from './resource/meeting/entities/meeting.entity';
 import { EquipmentModule } from './resource/equipment/equipment.module';
 import { Equipment } from './resource/equipment/entities/equipment.entity';
+import { LocationModule } from './resource/location/location.module';
+import { Location } from './resource/location/entities/location.entity';
 
 @Module({
   imports: [
@@ -105,7 +107,7 @@ import { Equipment } from './resource/equipment/entities/equipment.entity';
           connectorPackage: 'mysql2',
           synchronize: true,
           logging: true,
-          entities: [User, Role, Permission, Meeting, Equipment],
+          entities: [User, Role, Permission, Meeting, Equipment, Location],
           extra: {
             authPlugin: 'sha256_password',
           },
@@ -119,6 +121,7 @@ import { Equipment } from './resource/equipment/entities/equipment.entity';
     DemoModule,
     MeetingModule,
     EquipmentModule,
+    LocationModule,
   ],
   controllers: [AppController],
   providers: [
