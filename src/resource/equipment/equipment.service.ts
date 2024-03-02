@@ -15,32 +15,12 @@ import { paginateRawAndEntities } from 'nestjs-typeorm-paginate';
 import { getPaginationOptions } from 'src/utils/paginate';
 import { EquipmentListVo } from './vo/equipment-list.vo';
 import { UpdateEquipmentInfoDto } from './dto/update-equipment.dto';
+import { checkExist } from 'src/utils/checkExist';
 
 @Injectable()
 export class EquipmentService {
   @InjectRepository(Equipment)
   private readonly equipmentRepository: Repository<Equipment>;
-
-  /**
-   * 检查是否存在
-   * @param key
-   * @param cond
-   * @param condObj
-   * @param transformFunc
-   */
-  private async _checkExist(
-    key: string,
-    cond: string,
-    condObj: Record<string, any>,
-    transformFunc: (equipments: Equipment[]) => ErrorException | null,
-  ): Promise<ErrorException | null> {
-    const existEquipments = await this.equipmentRepository
-      .createQueryBuilder(key)
-      .where(cond, condObj)
-      .getMany();
-
-    return transformFunc(existEquipments);
-  }
 
   /**
    * 检查是否有重复的设备 (name code)
@@ -51,7 +31,7 @@ export class EquipmentService {
     name: string,
     code: string,
   ): Promise<ErrorException | null> {
-    return this._checkExist(
+    return checkExist(this.equipmentRepository)(
       'equipment',
       'equipment.name = :name OR equipment.code = :code',
       {
@@ -78,7 +58,7 @@ export class EquipmentService {
   private async checkExistEquipmentById(
     id: number | string,
   ): Promise<ErrorException | null> {
-    return await this._checkExist(
+    return await checkExist(this.equipmentRepository)(
       'equipment',
       'equipment.id = :id',
       { id },
