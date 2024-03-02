@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Meeting } from 'src/resource/meeting/entities/meeting.entity';
+import { MeetingRoom } from 'src/resource/meeting-room/entities/meeting-room.entity';
 
 export enum EquipmentState {
   ok,
@@ -37,6 +37,6 @@ export class Equipment {
   @UpdateDateColumn({ name: 'updated_at', comment: 'updated_at' })
   updatedAt: Date;
 
-  @ManyToMany(() => Meeting, (m) => m.equipments)
-  meetings: Meeting[];
+  @ManyToMany(() => MeetingRoom, (m) => m.equipments)
+  meetings: MeetingRoom[];
 }

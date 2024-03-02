@@ -13,7 +13,7 @@ import {
 } from 'typeorm';
 
 @Entity('meeting_room')
-export class Meeting {
+export class MeetingRoom {
   @PrimaryGeneratedColumn()
   id: number;
 

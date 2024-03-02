@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNotEmpty } from 'class-validator';
 
-export class CreateMeetingDto {
+export class CreateMeetingRoomDto {
   @ApiProperty()
   @IsNotEmpty({ message: 'meeting_name cannot be empty' })
   name: string;

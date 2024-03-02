@@ -1,4 +1,4 @@
-import { Meeting } from 'src/resource/meeting/entities/meeting.entity';
+import { MeetingRoom } from 'src/resource/meeting-room/entities/meeting-room.entity';
 import {
   Column,
   CreateDateColumn,
@@ -22,8 +22,8 @@ export class Location {
   @Column({ name: 'is_used', default: false, comment: 'location_is_used' })
   isUsed: boolean;
 
-  @OneToOne(() => Meeting)
-  meeting: Meeting;
+  @OneToOne(() => MeetingRoom)
+  meeting: MeetingRoom;
 
   @CreateDateColumn({ name: 'created_at', comment: 'created_at' })
   createdAt: Date;

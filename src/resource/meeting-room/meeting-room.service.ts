@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Meeting } from './entities/meeting.entity';
+import { MeetingRoom } from './entities/meeting-room.entity';
 import { Equipment } from '../equipment/entities/equipment.entity';
 import { ErrorException } from 'src/common/exceptions/error.exceptions.filter';
 import { COMMON_ERR } from 'src/constants/error/common';
 import { paginateRawAndEntities } from 'nestjs-typeorm-paginate';
 import { getPaginationOptions } from 'src/utils/paginate';
-import { MeetingListVo } from './vo/meeting-list.vo';
-import { CreateMeetingDto } from './dto/create-meeting.dto';
+import { MeetingRoomListVo } from './vo/meeting-room-list.vo';
+import { CreateMeetingRoomDto } from './dto/create-meeting-room.dto';
 import { Location } from '../location/entities/location.entity';
 
 @Injectable()
-export class MeetingService {
-  @InjectRepository(Meeting)
-  private readonly meetingRepository: Repository<Meeting>;
+export class MeetingRoomService {
+  @InjectRepository(MeetingRoom)
+  private readonly meetingRepository: Repository<MeetingRoom>;
 
   @InjectRepository(Equipment)
   private readonly equipmentRepository: Repository<Equipment>;
@@ -26,14 +26,14 @@ export class MeetingService {
    * 创建会议室
    * @param meetingDto
    */
-  async createMeetingRoom(meetingDto: CreateMeetingDto): Promise<any> {}
+  async createMeetingRoom(meetingDto: CreateMeetingRoomDto): Promise<any> {}
 
   /**
    * 用户会议室分页列表 (按照 UpdatedAt 进行排序)
    * @param page
    * @param limit
    */
-  async paginate(page: number, limit: number): Promise<MeetingListVo> {
+  async paginate(page: number, limit: number): Promise<MeetingRoomListVo> {
     const queryBuilder = this.meetingRepository.createQueryBuilder('meeting');
     queryBuilder
       .leftJoinAndSelect('meeting.equipments', 'equipment')
@@ -68,19 +68,19 @@ export class MeetingService {
     equipment2.name = '屏幕';
     equipment2.code = 'screen';
 
-    const room1 = new Meeting();
+    const room1 = new MeetingRoom();
     room1.name = '木星';
     room1.capacity = 10;
     room1.equipments = [equipment1];
     room1.location = location1;
 
-    const room2 = new Meeting();
+    const room2 = new MeetingRoom();
     room2.name = '金星';
     room2.capacity = 5;
     room2.equipments = [equipment2];
     room2.location = location2;
 
-    const room3 = new Meeting();
+    const room3 = new MeetingRoom();
     room3.name = '天王星';
     room3.capacity = 30;
     room3.equipments = [equipment1, equipment2];

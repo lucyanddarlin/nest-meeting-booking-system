@@ -10,17 +10,17 @@ import {
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
-import { MeetingService } from './meeting.service';
-import { CreateMeetingDto } from './dto/create-meeting.dto';
-import { UpdateMeetingDto } from './dto/update-meeting.dto';
+import { MeetingRoomService } from './meeting-room.service';
+import { CreateMeetingRoomDto } from './dto/create-meeting-room.dto';
+import { UpdateMeetingRoomDto } from './dto/update-meeting-room.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorator/public.decorator';
 import { defaultPaginationParams } from 'src/constants/paginate';
 
 @ApiTags('会议管理模块')
 @Controller('meeting')
-export class MeetingController {
-  constructor(private readonly meetingService: MeetingService) {}
+export class MeetingRoomController {
+  constructor(private readonly meetingService: MeetingRoomService) {}
 
   @ApiOperation({ summary: '会议室列表分页' })
   @Get('room/list')

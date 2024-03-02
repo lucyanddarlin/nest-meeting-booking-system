@@ -27,8 +27,8 @@ import LogMiddleware from './middleware/log';
 import { TransformInterceptor } from './common/interceptor/transform.interceptor';
 import { BaseExceptionsFilter } from './common/exceptions/base.exceptions.filter';
 import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter';
-import { MeetingModule } from './resource/meeting/meeting.module';
-import { Meeting } from './resource/meeting/entities/meeting.entity';
+import { MeetingRoomModule } from './resource/meeting-room/meeting-room.module';
+import { MeetingRoom } from './resource/meeting-room/entities/meeting-room.entity';
 import { EquipmentModule } from './resource/equipment/equipment.module';
 import { Equipment } from './resource/equipment/entities/equipment.entity';
 import { LocationModule } from './resource/location/location.module';
@@ -107,7 +107,7 @@ import { Location } from './resource/location/entities/location.entity';
           connectorPackage: 'mysql2',
           synchronize: true,
           logging: true,
-          entities: [User, Role, Permission, Meeting, Equipment, Location],
+          entities: [User, Role, Permission, MeetingRoom, Equipment, Location],
           extra: {
             authPlugin: 'sha256_password',
           },
@@ -119,7 +119,7 @@ import { Location } from './resource/location/entities/location.entity';
     CaptchaModule,
     AuthModule,
     DemoModule,
-    MeetingModule,
+    MeetingRoomModule,
     EquipmentModule,
     LocationModule,
   ],
