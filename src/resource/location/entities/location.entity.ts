@@ -3,7 +3,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -23,7 +22,6 @@ export class Location {
   @Column({ name: 'is_used', default: false, comment: 'location_is_used' })
   isUsed: boolean;
 
-  @JoinColumn({ name: 'meeting_id' })
   @OneToOne(() => Meeting)
   meeting: Meeting;
 
