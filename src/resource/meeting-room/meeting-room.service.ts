@@ -215,15 +215,24 @@ export class MeetingRoomService {
    * @param page
    * @param limit
    */
-  async paginate(page: number, limit: number): Promise<MeetingRoomListVo> {
+  async paginate(
+    page: number,
+    limit: number,
+    keyword?: string,
+  ): Promise<MeetingRoomListVo> {
     const queryBuilder = this.meetingRepository.createQueryBuilder('meeting');
     queryBuilder
       .leftJoinAndSelect('meeting.equipments', 'equipment')
-      .leftJoinAndSelect('meeting.location', 'location')
-      .orderBy('meeting.updated_at', 'DESC');
+      .leftJoinAndSelect('meeting.location', 'location');
+
+    if (keyword) {
+      queryBuilder.where('meeting.name LIKE :keyword', {
+        keyword: `%${keyword}%`,
+      });
+    }
 
     const [paginate] = await paginateRawAndEntities(
-      queryBuilder,
+      queryBuilder.orderBy('meeting.updated_at', 'DESC'),
       getPaginationOptions(page, limit),
     );
 

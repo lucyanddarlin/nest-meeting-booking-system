@@ -53,8 +53,10 @@ export class LocationController {
       ParseIntPipe,
     )
     limit: number,
+    @Query('name') name: string,
+    @Query('code') code: string,
   ) {
-    return this.locationService.paginate(page, limit);
+    return this.locationService.paginate(page, limit, name, code);
   }
 
   @ApiOperation({ summary: '根据 id 获取地点' })

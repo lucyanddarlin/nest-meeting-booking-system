@@ -54,8 +54,9 @@ export class MeetingRoomController {
       ParseIntPipe,
     )
     limit: number,
+    @Query('name') name: string,
   ) {
-    return this.meetingService.paginate(page, limit);
+    return this.meetingService.paginate(page, limit, name);
   }
 
   @ApiOperation({ summary: '根据 id 获取会议室' })

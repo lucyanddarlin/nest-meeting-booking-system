@@ -178,10 +178,23 @@ export class LocationService {
    * @param page
    * @param limit
    */
-  async paginate(page: number, limit: number): Promise<LocationListVo> {
+  async paginate(
+    page: number,
+    limit: number,
+    name?: string,
+    code?: string,
+  ): Promise<LocationListVo> {
     const query = this.locationRepository
       .createQueryBuilder('location')
       .leftJoinAndSelect('location.meeting', 'meeting');
+
+    if (name) {
+      query.where('location.name LIKE :name', { name: `%${name}%` });
+    }
+
+    if (code) {
+      query.where('location.code LIKE :code', { code: `%${code}%` });
+    }
 
     const [{ items, meta }] = await paginateRawAndEntities(
       query,

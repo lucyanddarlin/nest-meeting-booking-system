@@ -66,8 +66,10 @@ export class EquipmentController {
       ParseIntPipe,
     )
     limit: number,
+    @Query('name') name: string,
+    @Query('code') code: string,
   ) {
-    return this.equipmentService.paginate(page, limit);
+    return this.equipmentService.paginate(page, limit, name, code);
   }
 
   @ApiOperation({ summary: '根据 id 获取设备' })

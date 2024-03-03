@@ -190,10 +190,23 @@ export class EquipmentService {
    * @param page
    * @param limit
    */
-  async paginate(page: number, limit: number): Promise<EquipmentListVo> {
+  async paginate(
+    page: number,
+    limit: number,
+    name?: string,
+    code?: string,
+  ): Promise<EquipmentListVo> {
     const queryBuilder =
       this.equipmentRepository.createQueryBuilder('equipment');
     queryBuilder.leftJoinAndSelect('equipment.meetings', 'meetings');
+
+    if (name) {
+      queryBuilder.where('equipment.name LIKE :name', { name: `%${name}%` });
+    }
+
+    if (code) {
+      queryBuilder.where('equipment.code LIKE :code', { code: `%${code}%` });
+    }
 
     const [paginate] = await paginateRawAndEntities(
       queryBuilder,
