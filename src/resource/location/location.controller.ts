@@ -3,12 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   DefaultValuePipe,
   ParseIntPipe,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { LocationService } from './location.service';
 import { CreateLocationDto } from './dto/create-location.dto';
@@ -31,6 +30,12 @@ export class LocationController {
   @Post('update')
   updateLocation(@Body() updateLOcation: UpdateLocationDto) {
     return this.locationService.updateLocationInfo(updateLOcation);
+  }
+
+  @ApiOperation({ summary: '删除地点' })
+  @Delete(':id')
+  deleteLocation(@Param('id') id: string) {
+    return this.locationService.deleteLocation(+id);
   }
 
   @ApiOperation({ summary: '地点列表分页' })

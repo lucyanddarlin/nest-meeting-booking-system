@@ -7,6 +7,7 @@ import {
   Query,
   Post,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { MeetingRoomService } from './meeting-room.service';
 import { CreateMeetingRoomDto } from './dto/create-meeting-room.dto';
@@ -30,6 +31,12 @@ export class MeetingRoomController {
   @Post('info/update')
   updateMeetingRoomInfo(@Body() meetingRoomInfoDto: UpdateMeetingRoomInfoDto) {
     return this.meetingService.updateMeetingRoomInfo(meetingRoomInfoDto);
+  }
+
+  @ApiOperation({ summary: '删除会议室' })
+  @Delete(':id')
+  deleteMeetingRoom(@Param('id') id: string) {
+    return this.meetingService.deleteMeetingRoom(+id);
   }
 
   @ApiOperation({ summary: '会议室列表分页' })

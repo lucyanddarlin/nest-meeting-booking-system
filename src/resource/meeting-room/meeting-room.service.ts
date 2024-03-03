@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MeetingRoom } from './entities/meeting-room.entity';
@@ -34,7 +34,7 @@ export class MeetingRoomService {
   @Inject(EquipmentService)
   private readonly equipmentService: EquipmentService;
 
-  @Inject(LocationService)
+  @Inject(forwardRef(() => LocationService))
   private readonly locationService: LocationService;
 
   /**
@@ -177,6 +177,36 @@ export class MeetingRoomService {
       );
     } catch (error) {
       throw new ErrorException(COMMON_ERR, '更新异常: ' + error.message);
+    }
+  }
+
+  /**
+   * 删除会议室
+   */
+  async deleteMeetingRoom(id: number): Promise<any> {
+    const mRoom = await this.getMeetingRoomById(id);
+
+    const connection = this.meetingRepository.manager.connection;
+
+    try {
+      return await connection.transaction(
+        async (transactionalEntityManager) => {
+          const location = await this.locationService.getLocationById(
+            mRoom.location.id,
+          );
+
+          location.isUsed = false;
+
+          await Promise.all([
+            transactionalEntityManager.save(location),
+            transactionalEntityManager.remove(mRoom),
+          ]);
+
+          return '删除成功';
+        },
+      );
+    } catch (error) {
+      throw new ErrorException(COMMON_ERR, '删除异常');
     }
   }
 

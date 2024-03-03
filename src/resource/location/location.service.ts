@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -14,15 +14,18 @@ import {
   LOCATION_NOT_EXIST,
 } from 'src/constants/error/location';
 import to from 'src/utils/to';
-import DeleteLocationDto from './dto/delete-location.dto';
 import LocationListVo from './vo/location-list.vo';
 import { paginateRawAndEntities } from 'nestjs-typeorm-paginate';
 import { getPaginationOptions } from 'src/utils/paginate';
+import { MeetingRoomService } from '../meeting-room/meeting-room.service';
 
 @Injectable()
 export class LocationService {
   @InjectRepository(Location)
   private readonly locationRepository: Repository<Location>;
+
+  @Inject(forwardRef(() => MeetingRoomService))
+  private readonly meetingRoomService: MeetingRoomService;
 
   /**
    * 检查地点是否存在 (name code)
@@ -132,15 +135,23 @@ export class LocationService {
    * 删除地点
    * @param deleteLocationDto
    */
-  async deleteLocation(deleteLocationDto: DeleteLocationDto): Promise<any> {
-    const notExistErr = await this.checkExistLocationById(deleteLocationDto.id);
-    if (notExistErr) {
-      throw notExistErr;
+  async deleteLocation(id: number): Promise<any> {
+    const location = await this.getLocationById(id);
+    let mRoom;
+    if (location.isUsed) {
+      mRoom = await this.meetingRoomService.getMeetingRoomById(
+        location.meeting.id,
+      );
     }
 
+    const connect = this.locationRepository.manager.connection;
+
     try {
-      await this.locationRepository.delete(deleteLocationDto.id);
-      return '删除成功';
+      return await connect.transaction(async (transactionalEntityManager) => {
+        await transactionalEntityManager.remove([location, mRoom]);
+
+        return '删除成功';
+      });
     } catch (error) {
       throw new ErrorException(COMMON_ERR, '删除异常: ' + error.message);
     }
@@ -153,6 +164,7 @@ export class LocationService {
   async getLocationById(id: number): Promise<Location> {
     const existLocation = await this.locationRepository.findOne({
       where: { id },
+      relations: { meeting: true },
     });
     if (!existLocation) {
       throw new ErrorException(LOCATION_NOT_EXIST, '地点不存在');
