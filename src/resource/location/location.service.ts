@@ -15,6 +15,9 @@ import {
 } from 'src/constants/error/location';
 import to from 'src/utils/to';
 import DeleteLocationDto from './dto/delete-location.dto';
+import LocationListVo from './vo/location-list.vo';
+import { paginateRawAndEntities } from 'nestjs-typeorm-paginate';
+import { getPaginationOptions } from 'src/utils/paginate';
 
 @Injectable()
 export class LocationService {
@@ -71,7 +74,7 @@ export class LocationService {
    * @param createLocationDto
    */
   async createLocation(createLocationDto: CreateLocationDto): Promise<any> {
-    const existErr = this.checkExistLocationByInfo(
+    const existErr = await this.checkExistLocationByInfo(
       createLocationDto.name,
       createLocationDto.code,
     );
@@ -103,7 +106,7 @@ export class LocationService {
   async updateLocationInfo(updateLocationDto: UpdateLocationDto): Promise<any> {
     const notExistErr = await this.checkExistLocationById(updateLocationDto.id);
     if (notExistErr) {
-      return notExistErr;
+      throw notExistErr;
     }
 
     const existErr = await this.checkExistLocationByInfo(
@@ -111,7 +114,7 @@ export class LocationService {
       updateLocationDto.code,
     );
     if (existErr) {
-      return existErr;
+      throw existErr;
     }
 
     try {
@@ -126,13 +129,13 @@ export class LocationService {
   }
 
   /**
-   * 删除定位
+   * 删除地点
    * @param deleteLocationDto
    */
   async deleteLocation(deleteLocationDto: DeleteLocationDto): Promise<any> {
     const notExistErr = await this.checkExistLocationById(deleteLocationDto.id);
     if (notExistErr) {
-      return notExistErr;
+      throw notExistErr;
     }
 
     try {
@@ -141,5 +144,23 @@ export class LocationService {
     } catch (error) {
       throw new ErrorException(COMMON_ERR, '删除异常: ' + error.message);
     }
+  }
+
+  /**
+   * 地点列表分页
+   * @param page
+   * @param limit
+   */
+  async paginate(page: number, limit: number): Promise<LocationListVo> {
+    const query = this.locationRepository
+      .createQueryBuilder('location')
+      .leftJoinAndSelect('location.meeting', 'meeting');
+
+    const [{ items, meta }] = await paginateRawAndEntities(
+      query,
+      getPaginationOptions(page, limit),
+    );
+
+    return { list: items, meta };
   }
 }
