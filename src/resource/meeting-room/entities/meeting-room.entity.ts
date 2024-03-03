@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToOne,
@@ -34,6 +35,7 @@ export class MeetingRoom {
   @UpdateDateColumn({ name: 'updated_at', comment: 'updated_at' })
   updatedAt: Date;
 
+  @JoinColumn({ name: 'location_id' })
   @OneToOne(() => Location, (location) => location.meeting)
   location: Location;
 

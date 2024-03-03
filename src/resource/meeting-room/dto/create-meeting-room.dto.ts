@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty } from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty } from 'class-validator';
 
 export class CreateMeetingRoomDto {
   @ApiProperty()
@@ -7,15 +7,16 @@ export class CreateMeetingRoomDto {
   name: string;
 
   @ApiProperty()
+  @IsInt({ message: 'meeting_capacity should be passed as INT' })
   @IsNotEmpty({ message: 'meeting_capacity cannot be empty' })
   capacity: number;
 
   @ApiProperty()
-  @IsNotEmpty({ message: 'meeting_location cannot be empty' })
-  location: string;
+  @IsArray({ message: 'equipment should passed as array' })
+  @IsNotEmpty({ message: 'meeting_equipment_ids cannot be empty' })
+  equipmentsIds: Array<string | number>;
 
   @ApiProperty()
-  @IsNotEmpty({ message: 'meeting_equipment cannot be empty' })
-  @IsArray({ message: 'equipment should passed as array' })
-  equipments: Array<string | number>;
+  @IsNotEmpty({ message: 'meeting_location_id cannot be empty' })
+  locationId: string | number;
 }

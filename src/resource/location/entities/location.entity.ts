@@ -3,7 +3,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -29,7 +28,6 @@ export class Location {
   @UpdateDateColumn({ name: 'updated_at', comment: 'updated_at' })
   updatedAt: Date;
 
-  @JoinColumn({ name: 'meeting_id' })
-  @OneToOne(() => MeetingRoom)
+  @OneToOne(() => MeetingRoom, (meeting) => meeting.location)
   meeting: MeetingRoom;
 }

@@ -1,14 +1,11 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   DefaultValuePipe,
   ParseIntPipe,
   Query,
+  Post,
 } from '@nestjs/common';
 import { MeetingRoomService } from './meeting-room.service';
 import { CreateMeetingRoomDto } from './dto/create-meeting-room.dto';
@@ -18,12 +15,18 @@ import { Public } from 'src/decorator/public.decorator';
 import { defaultPaginationParams } from 'src/constants/paginate';
 
 @ApiTags('会议管理模块')
-@Controller('meeting')
+@Controller('meeting/room')
 export class MeetingRoomController {
   constructor(private readonly meetingService: MeetingRoomService) {}
 
+  @ApiOperation({ summary: '创建会议室' })
+  @Post('create')
+  createMeetingRoom(@Body() createMeetingRoomDto: CreateMeetingRoomDto) {
+    return this.meetingService.createMeetingRoom(createMeetingRoomDto);
+  }
+
   @ApiOperation({ summary: '会议室列表分页' })
-  @Get('room/list')
+  @Get('list')
   getMeetingRoomList(
     @Query(
       'page',

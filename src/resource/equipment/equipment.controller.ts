@@ -3,6 +3,7 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  Param,
   ParseIntPipe,
   Post,
   Query,
@@ -43,6 +44,13 @@ export class EquipmentController {
     return this.equipmentService.deleteEquipment(deleteEquipmentDto.id);
   }
 
+  @ApiOperation({ summary: '根据 ids 批量获取设备' })
+  @Get('many')
+  getEquipmentByIds(@Query('ids') ids: string) {
+    const idsArr = ids.split(',');
+    return this.equipmentService.getEquipmentByIds(idsArr);
+  }
+
   @ApiOperation({ summary: '设备列表分页' })
   @Get('list')
   getEquipmentList(
@@ -60,5 +68,11 @@ export class EquipmentController {
     limit: number,
   ) {
     return this.equipmentService.paginate(page, limit);
+  }
+
+  @ApiOperation({ summary: '根据 id 获取设备' })
+  @Get(':id')
+  getEquipmentById(@Param('id') id: string) {
+    return this.equipmentService.getEquipmentById(+id);
   }
 }

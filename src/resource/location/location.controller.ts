@@ -51,4 +51,10 @@ export class LocationController {
   ) {
     return this.locationService.paginate(page, limit);
   }
+
+  @ApiOperation({ summary: '根据 id 获取地点' })
+  @Get(':id')
+  getLocationById(@Param('id') id: string) {
+    return this.locationService.getLocationById(+id);
+  }
 }

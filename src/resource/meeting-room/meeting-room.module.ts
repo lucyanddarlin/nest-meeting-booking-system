@@ -5,9 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MeetingRoom } from './entities/meeting-room.entity';
 import { Equipment } from '../equipment/entities/equipment.entity';
 import { Location } from '../location/entities/location.entity';
+import { EquipmentModule } from '../equipment/equipment.module';
+import { LocationModule } from '../location/location.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MeetingRoom, Equipment, Location])],
+  imports: [
+    TypeOrmModule.forFeature([MeetingRoom, Equipment, Location]),
+    EquipmentModule,
+    LocationModule,
+  ],
   controllers: [MeetingRoomController],
   providers: [MeetingRoomService],
 })

@@ -147,6 +147,21 @@ export class LocationService {
   }
 
   /**
+   * 根据 id 获取地点
+   * @param id
+   */
+  async getLocationById(id: number): Promise<Location> {
+    const existLocation = await this.locationRepository.findOne({
+      where: { id },
+    });
+    if (!existLocation) {
+      throw new ErrorException(LOCATION_NOT_EXIST, '地点不存在');
+    }
+
+    return existLocation;
+  }
+
+  /**
    * 地点列表分页
    * @param page
    * @param limit

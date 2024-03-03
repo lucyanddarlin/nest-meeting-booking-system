@@ -131,6 +131,42 @@ export class EquipmentService {
   }
 
   /**
+   * 根据 id 获取设备
+   * @param id
+   * @returns
+   */
+  async getEquipmentById(id: number): Promise<Equipment> {
+    const existEquipment = await this.equipmentRepository.findOne({
+      where: { id },
+    });
+
+    if (!existEquipment) {
+      throw new ErrorException(EQUIPMENT_NOT_EXIST, '设备不存在');
+    }
+
+    return existEquipment;
+  }
+
+  /**
+   * 根据 ids 批量获取设备
+   * @param ids
+   */
+  async getEquipmentByIds(ids: Array<string | number>): Promise<Equipment[]> {
+    const uIds = [...new Set(ids)].map((id) => +id);
+
+    const equipments = await this.equipmentRepository
+      .createQueryBuilder('equipment')
+      .where('equipment.id IN (:...values)', { values: uIds })
+      .getMany();
+
+    if (equipments.length === 0) {
+      throw new ErrorException(EQUIPMENT_NOT_EXIST, '设备不存在');
+    }
+
+    return equipments;
+  }
+
+  /**
    * 删除设备 (id)
    * @param id
    */
