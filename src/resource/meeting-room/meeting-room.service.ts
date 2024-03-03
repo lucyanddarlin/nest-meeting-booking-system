@@ -206,7 +206,7 @@ export class MeetingRoomService {
         },
       );
     } catch (error) {
-      throw new ErrorException(COMMON_ERR, '删除异常');
+      throw new ErrorException(COMMON_ERR, '删除异常: ' + error.message);
     }
   }
 
