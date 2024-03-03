@@ -48,18 +48,6 @@ export class MeetingRoomService {
   }
 
   async initData() {
-    const location1 = new Location();
-    location1.name = 'location_1';
-    location1.code = 'lo_1';
-
-    const location2 = new Location();
-    location2.name = 'location_2';
-    location2.code = 'lo_2';
-
-    const location3 = new Location();
-    location3.name = 'location_3';
-    location3.code = 'lo_3';
-
     const equipment1 = new Equipment();
     equipment1.name = '白板';
     equipment1.code = 'whiteboard';
@@ -72,24 +60,39 @@ export class MeetingRoomService {
     room1.name = '木星';
     room1.capacity = 10;
     room1.equipments = [equipment1];
-    room1.location = location1;
 
     const room2 = new MeetingRoom();
     room2.name = '金星';
     room2.capacity = 5;
     room2.equipments = [equipment2];
-    room2.location = location2;
 
     const room3 = new MeetingRoom();
     room3.name = '天王星';
     room3.capacity = 30;
     room3.equipments = [equipment1, equipment2];
-    room3.location = location3;
+
+    const location1 = new Location();
+    location1.name = 'location_1';
+    location1.code = 'lo_1';
+    location1.isUsed = true;
+    location1.meeting = room1;
+
+    const location2 = new Location();
+    location2.name = 'location_2';
+    location2.code = 'lo_2';
+    location2.isUsed = true;
+    location2.meeting = room2;
+
+    const location3 = new Location();
+    location3.name = 'location_3';
+    location3.code = 'lo_3';
+    location3.isUsed = true;
+    location3.meeting = room3;
 
     try {
       await this.equipmentRepository.save([equipment1, equipment2]);
-      await this.locationRepository.save([location1, location2, location3]);
       await this.meetingRepository.save([room1, room2, room3]);
+      await this.locationRepository.save([location1, location2, location3]);
       return '初始化成功';
     } catch (error) {
       throw new ErrorException(COMMON_ERR, '初始化异常: ' + error.message);
