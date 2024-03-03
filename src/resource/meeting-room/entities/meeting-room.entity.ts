@@ -12,6 +12,14 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export enum MeetingRoomState {
+  isCreated,
+  isBooked,
+  isStarted,
+  isEnded,
+  isDeleted,
+}
+
 @Entity('meeting_room')
 export class MeetingRoom {
   @PrimaryGeneratedColumn()
@@ -26,8 +34,12 @@ export class MeetingRoom {
   @Column({ length: 100, default: '', comment: 'description' })
   description: string;
 
-  @Column({ name: 'is_booked', default: false, comment: 'is_booked' })
-  isBooked: boolean;
+  @Column({
+    type: 'enum',
+    enum: MeetingRoomState,
+    default: MeetingRoomState.isCreated,
+  })
+  state: MeetingRoomState;
 
   @CreateDateColumn({ name: 'created_at', comment: 'created_at' })
   createdAt: Date;
