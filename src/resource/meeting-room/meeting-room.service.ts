@@ -14,7 +14,11 @@ import { EquipmentService } from '../equipment/equipment.service';
 import { LocationService } from '../location/location.service';
 import { LOCATION_IS_USED } from 'src/constants/error/location';
 import { checkExist } from 'src/utils/checkExist';
-import { MEETING_NAME_EXIST } from 'src/constants/error/meeting';
+import {
+  MEETING_NAME_EXIST,
+  MEETING_NOT_EXIST,
+} from 'src/constants/error/meeting';
+import { UpdateMeetingRoomInfoDto } from './dto/update-meeting-room-info.dto';
 
 @Injectable()
 export class MeetingRoomService {
@@ -34,10 +38,10 @@ export class MeetingRoomService {
   private readonly locationService: LocationService;
 
   /**
-   * 检查会议室是否存在
+   * 检查会议室是否存在 (name)
    * @param name
    */
-  private async checkExistMeeting(name: string) {
+  private async checkExistMeetingRoom(name: string) {
     return await checkExist(this.meetingRepository)(
       'meeting',
       'meeting.name = :name',
@@ -56,7 +60,7 @@ export class MeetingRoomService {
    * @param meetingDto
    */
   async createMeetingRoom(meetingDto: CreateMeetingRoomDto): Promise<any> {
-    const existErr = await this.checkExistMeeting(meetingDto.name);
+    const existErr = await this.checkExistMeetingRoom(meetingDto.name);
     if (existErr) {
       throw existErr;
     }
@@ -94,6 +98,85 @@ export class MeetingRoomService {
       );
     } catch (error) {
       throw new ErrorException(COMMON_ERR, '创建会议室异常: ' + error.message);
+    }
+  }
+
+  /**
+   * 根据 id 获取会议室
+   * @param id
+   */
+  async getMeetingRoomById(id: number | string): Promise<MeetingRoom> {
+    const meetingRoom = await this.meetingRepository.findOne({
+      where: { id: +id },
+      relations: { location: true },
+    });
+
+    if (!meetingRoom) {
+      throw new ErrorException(MEETING_NOT_EXIST, '会议室不存在');
+    }
+
+    return meetingRoom;
+  }
+
+  /**
+   * 修改会议室信息
+   * @param meetingRoomInfoDto
+   */
+  async updateMeetingRoomInfo(
+    meetingRoomInfoDto: UpdateMeetingRoomInfoDto,
+  ): Promise<any> {
+    const mRoom = await this.getMeetingRoomById(meetingRoomInfoDto.id);
+
+    const existError = await this.checkExistMeetingRoom(
+      meetingRoomInfoDto.name,
+    );
+    if (existError) {
+      throw existError;
+    }
+
+    mRoom.name = meetingRoomInfoDto.name ?? mRoom.name;
+    mRoom.capacity = meetingRoomInfoDto.capacity ?? mRoom.capacity;
+
+    if (meetingRoomInfoDto.equipmentsIds) {
+      // 获取设备
+      const equipments = await this.equipmentService.getEquipmentByIds(
+        meetingRoomInfoDto.equipmentsIds,
+      );
+      mRoom.equipments = equipments;
+    }
+
+    const connection = this.meetingRepository.manager.connection;
+
+    try {
+      return await connection.transaction(
+        async (transactionalEntityManager) => {
+          if (meetingRoomInfoDto.locationId) {
+            // 获取地点
+            const [prevLocation, nextLocation] = await Promise.all([
+              await this.locationService.getLocationById(mRoom.location.id),
+              await this.locationService.getLocationById(
+                +meetingRoomInfoDto.locationId,
+              ),
+            ]);
+
+            if (nextLocation.isUsed) {
+              throw new ErrorException(LOCATION_IS_USED, '地点已被使用');
+            }
+
+            prevLocation.isUsed = false;
+            nextLocation.isUsed = true;
+
+            mRoom.location = nextLocation;
+
+            await transactionalEntityManager.save([prevLocation, nextLocation]);
+          }
+
+          await transactionalEntityManager.save(mRoom);
+          return '更新成功';
+        },
+      );
+    } catch (error) {
+      throw new ErrorException(COMMON_ERR, '更新异常: ' + error.message);
     }
   }
 
