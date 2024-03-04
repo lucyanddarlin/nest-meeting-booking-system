@@ -33,6 +33,7 @@ import { EquipmentModule } from './resource/equipment/equipment.module';
 import { Equipment } from './resource/equipment/entities/equipment.entity';
 import { LocationModule } from './resource/location/location.module';
 import { Location } from './resource/location/entities/location.entity';
+import { BookingModule } from './resource/booking/booking.module';
 
 @Module({
   imports: [
@@ -122,6 +123,7 @@ import { Location } from './resource/location/entities/location.entity';
     MeetingRoomModule,
     EquipmentModule,
     LocationModule,
+    BookingModule,
   ],
   controllers: [AppController],
   providers: [
