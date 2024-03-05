@@ -50,6 +50,12 @@ export class BookingController {
     return this.bookingService.updateBookingState(id, BookingState.IsDeleted)
   }
 
+  @ApiOperation({ summary: '催办预订' })
+  @Get('urge/:id')
+  urgeBooking(@Param('id') id: number) {
+    return this.bookingService.urgeBooking(id)
+  }
+
   @ApiOperation({ summary: '预订列表分页' })
   @Get('list')
   paginate(

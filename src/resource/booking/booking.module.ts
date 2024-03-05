@@ -7,10 +7,11 @@ import { User } from '../user/entities/user.entity'
 import { MeetingRoom } from '../meeting-room/entities/meeting-room.entity'
 import { MeetingRoomModule } from '../meeting-room/meeting-room.module'
 import { UserModule } from '../user/user.module'
+import { CaptchaModule } from '../captcha/captcha.module'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Booking, User, MeetingRoom]),
+    TypeOrmModule.forFeature([Booking, User, MeetingRoom, CaptchaModule]),
     MeetingRoomModule,
     UserModule,
   ],

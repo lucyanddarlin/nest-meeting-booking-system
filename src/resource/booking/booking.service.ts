@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { CreateBookingDto } from './dto/create-booking.dto'
-import { UpdateBookingDto } from './dto/update-booking.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Booking, BookingState } from './entities/booking.entity'
 import { Repository } from 'typeorm'
@@ -22,6 +21,10 @@ import {
   MEETING_TIME_INVALID,
 } from 'src/constants/error/meeting'
 import to from 'src/utils/to'
+import { RedisService } from '../redis/redis.service'
+import { BOOKING_URGE_TIME_INTERVAL, CAPTCHA_KEY } from 'src/constants/captcha'
+import { BOOKING_BUSY_URGE } from 'src/constants/error/booking'
+import { CaptchaService } from '../captcha/captcha.service'
 
 @Injectable()
 export class BookingService {
@@ -39,6 +42,12 @@ export class BookingService {
 
   @Inject(UserService)
   private readonly userService: UserService
+
+  @Inject(RedisService)
+  private readonly redisService: RedisService
+
+  @Inject(CaptchaService)
+  private readonly captchaService: CaptchaService
 
   /**
    * 创建预订
@@ -117,6 +126,51 @@ export class BookingService {
     }
 
     return '更新成功'
+  }
+
+  /**
+   * 催办预订
+   * @param id
+   */
+  async urgeBooking(id: number) {
+    const hasUrged = await this.redisService.get(
+      `${CAPTCHA_KEY.urge_booking}${id}`,
+    )
+
+    if (hasUrged) {
+      throw new ErrorException(BOOKING_BUSY_URGE, '催办频繁, 请稍后再试')
+    }
+
+    let adminEmail = await this.redisService.get('admin_email')
+
+    if (!adminEmail) {
+      adminEmail = (
+        await this.userRepository.findOne({
+          select: { email: true },
+          where: { isAdmin: true },
+        })
+      ).email
+
+      await this.redisService.set('admin_email', adminEmail)
+    }
+
+    try {
+      await Promise.all([
+        this.captchaService.sendEmailCaptcha({
+          to: adminEmail,
+          subject: '会议预订提醒',
+          html: `id 为 ${id} 的会议预订正在等待审批`,
+        }),
+        this.redisService.set(
+          `${CAPTCHA_KEY.urge_booking}${id}`,
+          1,
+          BOOKING_URGE_TIME_INTERVAL,
+        ),
+      ])
+      return '催办成功'
+    } catch (error) {
+      throw new ErrorException(COMMON_ERR, '催办异常: ' + error.message)
+    }
   }
 
   /**

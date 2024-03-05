@@ -1,0 +1,1 @@
+export const BOOKING_BUSY_URGE = 90000
