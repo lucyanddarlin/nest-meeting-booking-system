@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { createTransport, Transporter } from 'nodemailer';
+import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { createTransport, Transporter } from 'nodemailer'
 
 @Injectable()
 export class CaptchaService {
-  private readonly transporter: Transporter;
+  private readonly transporter: Transporter
 
   constructor(private readonly configService: ConfigService) {
     this.transporter = createTransport({
@@ -15,7 +15,7 @@ export class CaptchaService {
         user: this.configService.get('node_emailer_auth_user'),
         pass: this.configService.get('node_emailer_auth_pass'),
       },
-    });
+    })
   }
 
   async sendEmailCaptcha({
@@ -23,9 +23,9 @@ export class CaptchaService {
     subject,
     html,
   }: {
-    to: string;
-    subject: string;
-    html: string;
+    to: string
+    subject: string
+    html: string
   }) {
     await this.transporter.sendMail({
       from: {
@@ -35,6 +35,6 @@ export class CaptchaService {
       to,
       subject,
       html,
-    });
+    })
   }
 }

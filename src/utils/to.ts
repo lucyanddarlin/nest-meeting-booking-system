@@ -11,12 +11,12 @@ export function to<T, U = Error>(
     .then<[null, T]>((data: T) => [null, data])
     .catch<[U, undefined]>((err: U) => {
       if (errorExt) {
-        const parsedError = Object.assign({}, err, errorExt);
-        return [parsedError, undefined];
+        const parsedError = Object.assign({}, err, errorExt)
+        return [parsedError, undefined]
       }
 
-      return [err, undefined];
-    });
+      return [err, undefined]
+    })
 }
 
-export default to;
+export default to

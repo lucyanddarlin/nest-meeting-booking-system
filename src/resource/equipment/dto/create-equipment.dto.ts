@@ -1,17 +1,17 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger'
+import { IsInt, IsNotEmpty, IsOptional } from 'class-validator'
 
 export class CreateEquipmentDto {
   @ApiProperty()
   @IsNotEmpty({ message: "equipment'name cannot be empty" })
-  name: string;
+  name: string
 
   @ApiProperty()
   @IsNotEmpty({ message: "equipment's code cannot be empty" })
-  code: string;
+  code: string
 
   @ApiProperty()
   @IsInt({ message: 'availableQuantity should be passed like as INT' })
   @IsOptional()
-  availableQuantity?: number;
+  availableQuantity?: number
 }

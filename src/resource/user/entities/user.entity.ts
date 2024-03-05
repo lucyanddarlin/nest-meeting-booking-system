@@ -6,45 +6,45 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { Role } from './role.entity';
+} from 'typeorm'
+import { Role } from './role.entity'
 
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column({ length: 50, comment: 'username' })
-  username: string;
+  username: string
 
   @Column({ length: 100, comment: 'pwd' })
-  password: string;
+  password: string
 
   @Column({ name: 'nickname', length: 50, comment: 'nick_name' })
-  nickName: string;
+  nickName: string
 
   @Column({ comment: 'email' })
-  email: string;
+  email: string
 
   @Column({ length: 100, nullable: true, comment: 'avatar' })
-  avatar: string;
+  avatar: string
 
   @Column({ length: 20, nullable: true, comment: 'phone' })
-  phone: string;
+  phone: string
 
   @Column({ default: false, comment: 'is admin' })
-  isAdmin: boolean;
+  isAdmin: boolean
 
   @Column({ default: false, comment: 'is_frozen' })
-  isFrozen: boolean;
+  isFrozen: boolean
 
   @CreateDateColumn({ name: 'created_at', comment: 'created_at' })
-  createdAt: Date;
+  createdAt: Date
 
   @UpdateDateColumn({ name: 'updated_at', comment: 'updated_at' })
-  updatedAt: Date;
+  updatedAt: Date
 
   @ManyToMany(() => Role)
   @JoinTable({ name: 'user_roles' })
-  roles: Role[];
+  roles: Role[]
 }

@@ -1,6 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as packageConfig from '../../package.json';
+import { INestApplication } from '@nestjs/common'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import * as packageConfig from '../../package.json'
 
 export const setupDocument = (app: INestApplication<any>) => {
   const options = new DocumentBuilder()
@@ -12,9 +12,9 @@ export const setupDocument = (app: INestApplication<any>) => {
       name: 'jwt',
       description: 'bearer',
     })
-    .build();
+    .build()
 
-  const document = SwaggerModule.createDocument(app, options);
+  const document = SwaggerModule.createDocument(app, options)
 
-  SwaggerModule.setup('api/doc', app, document);
-};
+  SwaggerModule.setup('api/doc', app, document)
+}

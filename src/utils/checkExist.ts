@@ -1,5 +1,5 @@
-import { Repository } from 'typeorm';
-import { ErrorException } from 'src/common/exceptions/error.exceptions.filter';
+import { Repository } from 'typeorm'
+import { ErrorException } from 'src/common/exceptions/error.exceptions.filter'
 
 export const checkExist = <T>(repository: Repository<T>) => {
   return async (
@@ -11,8 +11,8 @@ export const checkExist = <T>(repository: Repository<T>) => {
     const many = await repository
       .createQueryBuilder(key)
       .where(cond, condObj)
-      .getMany();
+      .getMany()
 
-    return transformFunc(many);
-  };
-};
+    return transformFunc(many)
+  }
+}

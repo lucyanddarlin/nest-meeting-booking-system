@@ -1,4 +1,4 @@
-import { MeetingRoom } from 'src/resource/meeting-room/entities/meeting-room.entity';
+import { MeetingRoom } from 'src/resource/meeting-room/entities/meeting-room.entity'
 import {
   Column,
   CreateDateColumn,
@@ -6,28 +6,28 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
+} from 'typeorm'
 
 @Entity('locations')
 export class Location {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column({ length: 50, comment: 'location_name' })
-  name: string;
+  name: string
 
   @Column({ length: 50, comment: 'location_code' })
-  code: string;
+  code: string
 
   @Column({ name: 'is_used', default: false, comment: 'location_is_used' })
-  isUsed: boolean;
+  isUsed: boolean
 
   @CreateDateColumn({ name: 'created_at', comment: 'created_at' })
-  createdAt: Date;
+  createdAt: Date
 
   @UpdateDateColumn({ name: 'updated_at', comment: 'updated_at' })
-  updatedAt: Date;
+  updatedAt: Date
 
   @OneToOne(() => MeetingRoom, (meeting) => meeting.location)
-  meeting: MeetingRoom;
+  meeting: MeetingRoom
 }

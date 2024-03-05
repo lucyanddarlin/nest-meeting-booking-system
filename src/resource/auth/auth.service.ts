@@ -1,36 +1,36 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
-import { SALT_ROUND } from 'src/constants/auth';
-import { PayLoad } from 'src/resource/user/dto/login-user.dto';
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { JwtService } from '@nestjs/jwt'
+import * as bcrypt from 'bcrypt'
+import { SALT_ROUND } from 'src/constants/auth'
+import { PayLoad } from 'src/resource/user/dto/login-user.dto'
 
 interface VerifyRefreshTokenResult {
-  userId: number;
-  isAdmin: boolean;
+  userId: number
+  isAdmin: boolean
 }
 
 @Injectable()
 export class AuthService {
   @Inject(JwtService)
-  private readonly jwtService: JwtService;
+  private readonly jwtService: JwtService
 
   @Inject(ConfigService)
-  private readonly configService: ConfigService;
+  private readonly configService: ConfigService
 
   /**
    * 加密密码
    * @param pwd
    */
   async hashPassword(pwd: string): Promise<string> {
-    return await bcrypt.hash(pwd, SALT_ROUND);
+    return await bcrypt.hash(pwd, SALT_ROUND)
   }
 
   /**
    * 验证密码
    */
   async verifyPassword(pwd: string, hashPwd: string): Promise<boolean> {
-    return await bcrypt.compare(pwd, hashPwd);
+    return await bcrypt.compare(pwd, hashPwd)
   }
 
   /**
@@ -48,9 +48,9 @@ export class AuthService {
       {
         expiresIn: this.configService.get('jwt_access_exp') ?? '30m',
       },
-    );
+    )
 
-    return accessToken;
+    return accessToken
   }
 
   /**
@@ -66,9 +66,9 @@ export class AuthService {
       {
         expiresIn: this.configService.get('jwt_refresh_exp') ?? '5d',
       },
-    );
+    )
 
-    return refreshToken;
+    return refreshToken
   }
 
   /**
@@ -76,8 +76,8 @@ export class AuthService {
    */
   verifyRefreshToken(refreshToken: string): VerifyRefreshTokenResult {
     const verifyData =
-      this.jwtService.verify<VerifyRefreshTokenResult>(refreshToken);
+      this.jwtService.verify<VerifyRefreshTokenResult>(refreshToken)
 
-    return verifyData;
+    return verifyData
   }
 }

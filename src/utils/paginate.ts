@@ -1,5 +1,5 @@
-import { IPaginationOptions } from 'nestjs-typeorm-paginate';
-import { MAX_PAGE_SIZE, defaultPaginationParams } from 'src/constants/paginate';
+import { IPaginationOptions } from 'nestjs-typeorm-paginate'
+import { MAX_PAGE_SIZE, defaultPaginationParams } from 'src/constants/paginate'
 
 export class CustomPaginationMeta {
   constructor(
@@ -14,7 +14,7 @@ export const getPaginationOptions = (
   page: number = defaultPaginationParams.currentPage,
   size: number = defaultPaginationParams.pageSize,
 ) => {
-  const limit = size > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : size;
+  const limit = size > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : size
 
   const options: IPaginationOptions<CustomPaginationMeta> = {
     page,
@@ -25,9 +25,9 @@ export const getPaginationOptions = (
         meta.currentPage,
         meta.totalItems,
         meta.totalPages,
-      );
+      )
     },
-  };
+  }
 
-  return options;
-};
+  return options
+}

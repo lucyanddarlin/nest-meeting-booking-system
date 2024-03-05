@@ -1,7 +1,7 @@
-import { Global, Module } from '@nestjs/common';
-import { RedisService } from './redis.service';
-import { ConfigService } from '@nestjs/config';
-import { createClient } from 'redis';
+import { Global, Module } from '@nestjs/common'
+import { RedisService } from './redis.service'
+import { ConfigService } from '@nestjs/config'
+import { createClient } from 'redis'
 
 @Global()
 @Module({
@@ -17,10 +17,10 @@ import { createClient } from 'redis';
             port: configService.get('redis_server_port'),
           },
           database: configService.get('redis_server_db'),
-        });
+        })
 
-        await client.connect();
-        return client;
+        await client.connect()
+        return client
       },
     },
   ],

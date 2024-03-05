@@ -5,8 +5,8 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { MeetingRoom } from 'src/resource/meeting-room/entities/meeting-room.entity';
+} from 'typeorm'
+import { MeetingRoom } from 'src/resource/meeting-room/entities/meeting-room.entity'
 
 export enum EquipmentState {
   ok,
@@ -17,26 +17,26 @@ export enum EquipmentState {
 @Entity('equipment')
 export class Equipment {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column({ length: 50, comment: 'equipment_name' })
-  name: string;
+  name: string
 
   @Column({ length: 50, comment: 'equipment_code' })
-  code: string;
+  code: string
 
   @Column({ default: 50, comment: 'available_quantity' })
-  availableQuantity: number;
+  availableQuantity: number
 
   @Column({ type: 'enum', enum: EquipmentState, default: EquipmentState.ok })
-  state: EquipmentState;
+  state: EquipmentState
 
   @CreateDateColumn({ name: 'created_at', comment: 'created_at' })
-  createdAt: Date;
+  createdAt: Date
 
   @UpdateDateColumn({ name: 'updated_at', comment: 'updated_at' })
-  updatedAt: Date;
+  updatedAt: Date
 
   @ManyToMany(() => MeetingRoom, (m) => m.equipments)
-  meetings: MeetingRoom[];
+  meetings: MeetingRoom[]
 }

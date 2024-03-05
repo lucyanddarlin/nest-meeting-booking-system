@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 import {
   IsBoolean,
   IsMobilePhone,
@@ -6,12 +6,12 @@ import {
   IsOptional,
   MaxLength,
   MinLength,
-} from 'class-validator';
+} from 'class-validator'
 
 export class UpdateBaseUserInfoDto {
   @ApiProperty()
   @MaxLength(15, { message: 'nickname is too long' })
-  nickname?: string;
+  nickname?: string
 
   @ApiProperty()
   @IsMobilePhone(
@@ -19,35 +19,35 @@ export class UpdateBaseUserInfoDto {
     { strictMode: false },
     { message: 'phone format is wrong' },
   )
-  phone?: string;
+  phone?: string
 
-  avatar?: string;
+  avatar?: string
 }
 
 export class updateUserPasswordDto {
   @ApiProperty()
   @IsNotEmpty({ message: 'captcha cannot not be null' })
-  captcha: string;
+  captcha: string
 
   @ApiProperty()
   @IsNotEmpty({ message: 'password cannot be empty' })
   @MinLength(6, { message: "password's length should more than 6" })
-  oldPassword: string;
+  oldPassword: string
 
   @ApiProperty()
   @IsNotEmpty({ message: 'password cannot be empty' })
   @MinLength(6, { message: "password's length should more than 6" })
-  newPassword: string;
+  newPassword: string
 
   @ApiProperty()
   @IsNotEmpty({ message: 'password cannot be empty' })
   @MinLength(6, { message: "password's length should more than 6" })
-  newPasswordConfirm: string;
+  newPasswordConfirm: string
 }
 
 export class updateUserStatusDto {
   @ApiProperty()
   @IsBoolean({ message: 'isFrozen should be boolean' })
   @IsOptional()
-  isFrozen?: boolean;
+  isFrozen?: boolean
 }

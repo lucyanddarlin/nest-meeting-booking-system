@@ -1,17 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { RedisClientType } from 'redis';
+import { Inject, Injectable } from '@nestjs/common'
+import { RedisClientType } from 'redis'
 
 @Injectable()
 export class RedisService {
   @Inject('REDIS_CLIENT')
-  private readonly redisClient: RedisClientType;
+  private readonly redisClient: RedisClientType
 
   /**
    * 读取 key 值
    * @param key
    */
   async get(key: string) {
-    return await this.redisClient.get(key);
+    return await this.redisClient.get(key)
   }
 
   /**
@@ -21,20 +21,20 @@ export class RedisService {
    * @param ttl
    */
   async set(key: string, value: string | number, ttl?: number) {
-    let result: string | number | boolean;
-    result = await this.redisClient.set(key, value);
+    let result: string | number | boolean
+    result = await this.redisClient.set(key, value)
 
     if (ttl) {
-      result = await this.redisClient.expire(key, ttl);
+      result = await this.redisClient.expire(key, ttl)
     }
 
-    return result;
+    return result
   }
 
   /**
    * 删除 key
    */
   async del(key: string | string[]) {
-    return await this.redisClient.del(key);
+    return await this.redisClient.del(key)
   }
 }

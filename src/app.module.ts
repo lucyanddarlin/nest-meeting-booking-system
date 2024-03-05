@@ -3,37 +3,38 @@ import {
   Module,
   NestModule,
   RequestMethod,
-} from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { WinstonModule } from 'nest-winston';
-import * as winston from 'winston';
-import 'winston-daily-rotate-file';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserModule } from './resource/user/user.module';
-import { User } from './resource/user/entities/user.entity';
-import { Role } from './resource/user/entities/role.entity';
-import { Permission } from './resource/user/entities/permission.entity';
-import { RedisModule } from './resource/redis/redis.module';
-import { CaptchaModule } from './resource/captcha/captcha.module';
-import { AuthModule } from './resource/auth/auth.module';
-import { DemoModule } from './resource/demo/demo.module';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { LoginGuard } from './guard/login.guard';
-import { PermissionGuard } from './guard/permission.guard';
-import LogMiddleware from './middleware/log';
-import { TransformInterceptor } from './common/interceptor/transform.interceptor';
-import { BaseExceptionsFilter } from './common/exceptions/base.exceptions.filter';
-import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter';
-import { MeetingRoomModule } from './resource/meeting-room/meeting-room.module';
-import { MeetingRoom } from './resource/meeting-room/entities/meeting-room.entity';
-import { EquipmentModule } from './resource/equipment/equipment.module';
-import { Equipment } from './resource/equipment/entities/equipment.entity';
-import { LocationModule } from './resource/location/location.module';
-import { Location } from './resource/location/entities/location.entity';
-import { BookingModule } from './resource/booking/booking.module';
+} from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { JwtModule } from '@nestjs/jwt'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { WinstonModule } from 'nest-winston'
+import * as winston from 'winston'
+import 'winston-daily-rotate-file'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { UserModule } from './resource/user/user.module'
+import { User } from './resource/user/entities/user.entity'
+import { Role } from './resource/user/entities/role.entity'
+import { Permission } from './resource/user/entities/permission.entity'
+import { RedisModule } from './resource/redis/redis.module'
+import { CaptchaModule } from './resource/captcha/captcha.module'
+import { AuthModule } from './resource/auth/auth.module'
+import { DemoModule } from './resource/demo/demo.module'
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
+import { LoginGuard } from './guard/login.guard'
+import { PermissionGuard } from './guard/permission.guard'
+import LogMiddleware from './middleware/log'
+import { TransformInterceptor } from './common/interceptor/transform.interceptor'
+import { BaseExceptionsFilter } from './common/exceptions/base.exceptions.filter'
+import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter'
+import { MeetingRoomModule } from './resource/meeting-room/meeting-room.module'
+import { MeetingRoom } from './resource/meeting-room/entities/meeting-room.entity'
+import { EquipmentModule } from './resource/equipment/equipment.module'
+import { Equipment } from './resource/equipment/entities/equipment.entity'
+import { LocationModule } from './resource/location/location.module'
+import { Location } from './resource/location/entities/location.entity'
+import { BookingModule } from './resource/booking/booking.module'
+import { Booking } from './resource/booking/entities/booking.entity'
 
 @Module({
   imports: [
@@ -78,7 +79,7 @@ import { BookingModule } from './resource/booking/booking.module';
               ),
             }),
           ],
-        };
+        }
       },
     }),
     // 引入 jwt
@@ -91,7 +92,7 @@ import { BookingModule } from './resource/booking/booking.module';
           signOptions: {
             expiresIn: configService.get('jwt_access_exp'),
           },
-        };
+        }
       },
     }),
     // 引入 TypeOrm
@@ -108,11 +109,19 @@ import { BookingModule } from './resource/booking/booking.module';
           connectorPackage: 'mysql2',
           synchronize: true,
           logging: true,
-          entities: [User, Role, Permission, MeetingRoom, Equipment, Location],
+          entities: [
+            User,
+            Role,
+            Permission,
+            MeetingRoom,
+            Equipment,
+            Location,
+            Booking,
+          ],
           extra: {
             authPlugin: 'sha256_password',
           },
-        };
+        }
       },
     }),
     UserModule,
@@ -154,6 +163,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LogMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
+      .forRoutes({ path: '*', method: RequestMethod.ALL })
   }
 }
