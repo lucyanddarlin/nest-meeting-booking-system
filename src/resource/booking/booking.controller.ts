@@ -37,8 +37,17 @@ export class BookingController {
       ParseIntPipe,
     )
     limit: number,
+    @Query('username') username: string,
+    @Query('meetingRoom') meetingRoom: string,
+    @Query('location') location: string,
   ) {
-    return this.bookingService.paginate(page, limit)
+    return this.bookingService.paginate(
+      page,
+      limit,
+      username,
+      meetingRoom,
+      location,
+    )
   }
 
   @ApiOperation({ summary: '开发环境初始化数据' })

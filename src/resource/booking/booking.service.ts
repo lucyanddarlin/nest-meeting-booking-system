@@ -29,12 +29,30 @@ export class BookingService {
    * @param page
    * @param limit
    */
-  async paginate(page: number, limit: number): Promise<BookingListVo> {
+  async paginate(
+    page: number,
+    limit: number,
+    username?: string,
+    mRoomName?: string,
+    locationName?: string,
+  ): Promise<BookingListVo> {
     const query = this.bookingRepository
       .createQueryBuilder('booking')
       .leftJoinAndSelect('booking.meetingRoom', 'meeting')
       .leftJoinAndSelect('booking.user', 'user')
       .leftJoinAndSelect('meeting.location', 'location')
+
+    if (username) {
+      query.andWhere('user.username = :username', { username })
+    }
+
+    if (mRoomName) {
+      query.andWhere('meeting.name = :mRoomName', { mRoomName })
+    }
+
+    if (locationName) {
+      query.andWhere('location.name = :locationName', { locationName })
+    }
 
     const [{ items, meta }] = await paginateRawAndEntities(
       query,
