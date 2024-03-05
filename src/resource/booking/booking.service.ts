@@ -21,6 +21,7 @@ import {
   MEETING_ROOM_INVALID,
   MEETING_TIME_INVALID,
 } from 'src/constants/error/meeting'
+import to from 'src/utils/to'
 
 @Injectable()
 export class BookingService {
@@ -99,6 +100,23 @@ export class BookingService {
     } catch (error) {
       throw new ErrorException(COMMON_ERR, '预订异常: ' + error.message)
     }
+  }
+
+  /**
+   * 更新预订状态
+   * @param id
+   * @param nextState
+   */
+  async updateBookingState(id: number, nextState: BookingState): Promise<any> {
+    const [err] = await to(
+      this.bookingRepository.update(id, { state: nextState }),
+    )
+
+    if (err) {
+      throw new ErrorException(COMMON_ERR, '更新异常: ' + err.message)
+    }
+
+    return '更新成功'
   }
 
   /**
