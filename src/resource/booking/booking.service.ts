@@ -7,6 +7,11 @@ import { Repository } from 'typeorm'
 import { ApiOperation } from '@nestjs/swagger'
 import { User } from '../user/entities/user.entity'
 import { MeetingRoom } from '../meeting-room/entities/meeting-room.entity'
+import { ErrorException } from 'src/common/exceptions/error.exceptions.filter'
+import { COMMON_ERR } from 'src/constants/error/common'
+import { paginateRawAndEntities } from 'nestjs-typeorm-paginate'
+import { getPaginationOptions } from 'src/utils/paginate'
+import BookingListVo from './vo/booking-list.vo'
 
 @Injectable()
 export class BookingService {
@@ -19,7 +24,35 @@ export class BookingService {
   @InjectRepository(MeetingRoom)
   private readonly meetingRoomRepository: Repository<MeetingRoom>
 
-  @ApiOperation({ summary: '开发环境初始化数据' })
+  /**
+   * 预订列表分页
+   * @param page
+   * @param limit
+   */
+  async paginate(page: number, limit: number): Promise<BookingListVo> {
+    const query = this.bookingRepository
+      .createQueryBuilder('booking')
+      .leftJoinAndSelect('booking.meetingRoom', 'meeting')
+      .leftJoinAndSelect('booking.user', 'user')
+      .leftJoinAndSelect('meeting.location', 'location')
+
+    const [{ items, meta }] = await paginateRawAndEntities(
+      query,
+      getPaginationOptions(page, limit),
+    )
+
+    items.map((book) => {
+      delete book.user.password
+
+      return book
+    })
+
+    return { list: items, meta }
+  }
+
+  /**
+   * 开发环境初始化环境
+   */
   async initDevData() {
     try {
       const user1 = await this.userRepository.findOne({ where: { id: 1 } })
@@ -64,6 +97,8 @@ export class BookingService {
       ])
 
       return '初始化成功'
-    } catch (error) {}
+    } catch (error) {
+      throw new ErrorException(COMMON_ERR, '初始化异常: ' + error.message)
+    }
   }
 }

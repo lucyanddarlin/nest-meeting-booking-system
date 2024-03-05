@@ -30,7 +30,7 @@ export class Booking {
   @Column({ type: 'enum', enum: BookingState, default: BookingState.Applying })
   state: BookingState
 
-  @Column({ length: 100, comment: 'booking_note' })
+  @Column({ length: 100, default: '', comment: 'booking_note' })
   note: string
 
   @CreateDateColumn({ name: 'created_at', comment: 'created_at' })
