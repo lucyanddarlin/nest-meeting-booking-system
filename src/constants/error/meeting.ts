@@ -1,3 +1,5 @@
 // 会议相关错误
-export const MEETING_NAME_EXIST = 80001
-export const MEETING_NOT_EXIST = 80002
+export const MEETING_ROOM_NAME_EXIST = 80001
+export const MEETING_ROOM_NOT_EXIST = 80002
+export const MEETING_ROOM_INVALID = 80003
+export const MEETING_TIME_INVALID = 80004

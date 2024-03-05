@@ -141,7 +141,7 @@ export class UserService {
   /**
    * 根据 id 查询用户 (包含对应的角色和权限)
    */
-  async findUserById(id: number, isAdmin: boolean): Promise<PayLoad> {
+  async getUserById(id: number, isAdmin: boolean): Promise<User> {
     const existUser = await this.userRepository.findOne({
       where: {
         id,
@@ -153,7 +153,11 @@ export class UserService {
       throw new UserNotExistError()
     }
 
-    return convertUserPayLoad(existUser)
+    return existUser
+  }
+
+  async getUserInfoById(id: number, isAdmin: boolean): Promise<PayLoad> {
+    return convertUserPayLoad(await this.getUserById(id, isAdmin))
   }
 
   /**
@@ -247,6 +251,26 @@ export class UserService {
   }
 
   /**
+   * 根据 id 批量获取用户信息
+   */
+  async getUserInfoByIds(ids: number[]) {
+    const query = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id IN (:...ids)', { ids })
+      .getMany()
+
+    if (!query || query.length === 0) {
+      throw new UserNotExistError()
+    }
+
+    const userInfos = query.map((info) => {
+      return { ...info, password: undefined }
+    })
+
+    return userInfos
+  }
+
+  /**
    * 获取用户分页列表 (按照 UpdatedAt 进行排序)
    * @param page
    * @param limit
@@ -271,7 +295,7 @@ export class UserService {
   async handleRefreshToken(refreshToken: string): Promise<LoginVo> {
     try {
       const verifyData = this.authService.verifyRefreshToken(refreshToken)
-      const existUser = await this.findUserById(
+      const existUser = await this.getUserInfoById(
         verifyData.userId,
         verifyData.isAdmin,
       )

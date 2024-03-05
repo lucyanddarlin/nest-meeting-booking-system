@@ -15,8 +15,8 @@ import { LocationService } from '../location/location.service'
 import { LOCATION_IS_USED } from 'src/constants/error/location'
 import { checkExist } from 'src/utils/checkExist'
 import {
-  MEETING_NAME_EXIST,
-  MEETING_NOT_EXIST,
+  MEETING_ROOM_NAME_EXIST,
+  MEETING_ROOM_NOT_EXIST,
 } from 'src/constants/error/meeting'
 import { UpdateMeetingRoomInfoDto } from './dto/update-meeting-room-info.dto'
 
@@ -48,7 +48,7 @@ export class MeetingRoomService {
       { name },
       (meetings) => {
         if (meetings.length !== 0) {
-          return new ErrorException(MEETING_NAME_EXIST, '会议室名称已存在')
+          return new ErrorException(MEETING_ROOM_NAME_EXIST, '会议室名称已存在')
         }
         return null
       },
@@ -112,7 +112,7 @@ export class MeetingRoomService {
     })
 
     if (!meetingRoom) {
-      throw new ErrorException(MEETING_NOT_EXIST, '会议室不存在')
+      throw new ErrorException(MEETING_ROOM_NOT_EXIST, '会议室不存在')
     }
 
     return meetingRoom

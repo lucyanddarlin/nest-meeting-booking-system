@@ -1,4 +1,4 @@
 // 设备相关错误
-export const EQUIPMENT_NAME_EXIST = 50000
-export const EQUIPMENT_CODE_EXIST = 50001
-export const EQUIPMENT_NOT_EXIST = 50002
+export const EQUIPMENT_NAME_EXIST = 70000
+export const EQUIPMENT_CODE_EXIST = 70001
+export const EQUIPMENT_NOT_EXIST = 70002
