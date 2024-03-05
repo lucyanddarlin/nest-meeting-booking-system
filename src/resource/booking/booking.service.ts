@@ -4,7 +4,6 @@ import { UpdateBookingDto } from './dto/update-booking.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Booking } from './entities/booking.entity'
 import { Repository } from 'typeorm'
-import { ApiOperation } from '@nestjs/swagger'
 import { User } from '../user/entities/user.entity'
 import { MeetingRoom } from '../meeting-room/entities/meeting-room.entity'
 import { ErrorException } from 'src/common/exceptions/error.exceptions.filter'
@@ -43,15 +42,21 @@ export class BookingService {
       .leftJoinAndSelect('meeting.location', 'location')
 
     if (username) {
-      query.andWhere('user.username = :username', { username })
+      query.andWhere('user.username LIKE :username', {
+        username: `%${username}%`,
+      })
     }
 
     if (mRoomName) {
-      query.andWhere('meeting.name = :mRoomName', { mRoomName })
+      query.andWhere('meeting.name LIKE :mRoomName', {
+        mRoomName: `%${mRoomName}%`,
+      })
     }
 
     if (locationName) {
-      query.andWhere('location.name = :locationName', { locationName })
+      query.andWhere('location.name LIKE :locationName', {
+        locationName: `%${locationName}%`,
+      })
     }
 
     const [{ items, meta }] = await paginateRawAndEntities(

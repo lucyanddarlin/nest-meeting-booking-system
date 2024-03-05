@@ -186,11 +186,11 @@ export class LocationService {
       .leftJoinAndSelect('location.meeting', 'meeting')
 
     if (name) {
-      query.where('location.name LIKE :name', { name: `%${name}%` })
+      query.andWhere('location.name LIKE :name', { name: `%${name}%` })
     }
 
     if (code) {
-      query.where('location.code LIKE :code', { code: `%${code}%` })
+      query.andWhere('location.code LIKE :code', { code: `%${code}%` })
     }
 
     const [{ items, meta }] = await paginateRawAndEntities(

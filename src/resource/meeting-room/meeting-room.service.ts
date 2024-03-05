@@ -224,7 +224,7 @@ export class MeetingRoomService {
       .leftJoinAndSelect('meeting.location', 'location')
 
     if (keyword) {
-      queryBuilder.where('meeting.name LIKE :keyword', {
+      queryBuilder.andWhere('meeting.name LIKE :keyword', {
         keyword: `%${keyword}%`,
       })
     }

@@ -201,11 +201,11 @@ export class EquipmentService {
     queryBuilder.leftJoinAndSelect('equipment.meetings', 'meetings')
 
     if (name) {
-      queryBuilder.where('equipment.name LIKE :name', { name: `%${name}%` })
+      queryBuilder.andWhere('equipment.name LIKE :name', { name: `%${name}%` })
     }
 
     if (code) {
-      queryBuilder.where('equipment.code LIKE :code', { code: `%${code}%` })
+      queryBuilder.andWhere('equipment.code LIKE :code', { code: `%${code}%` })
     }
 
     const [paginate] = await paginateRawAndEntities(
