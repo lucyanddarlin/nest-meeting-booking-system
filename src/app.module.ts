@@ -7,9 +7,11 @@ import {
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { JwtModule } from '@nestjs/jwt'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
 import { WinstonModule } from 'nest-winston'
 import * as winston from 'winston'
 import 'winston-daily-rotate-file'
+
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { UserModule } from './resource/user/user.module'
@@ -19,7 +21,6 @@ import { Permission } from './resource/user/entities/permission.entity'
 import { RedisModule } from './resource/redis/redis.module'
 import { CaptchaModule } from './resource/captcha/captcha.module'
 import { AuthModule } from './resource/auth/auth.module'
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
 import { LoginGuard } from './guard/login.guard'
 import { PermissionGuard } from './guard/permission.guard'
 import LogMiddleware from './middleware/log'
@@ -43,6 +44,7 @@ import { StatisticModule } from './resource/statistic/statistic.module'
       isGlobal: true,
       envFilePath: 'src/.env',
     }),
+    // 引入日志
     WinstonModule.forRootAsync({
       inject: [ConfigService],
       useFactory(configService: ConfigService) {
