@@ -10,7 +10,7 @@ pnpm build
 
 ### Swagger
 ```sh
-http:localhost:3000/api/doc
+http://localhost:3000/api/doc
 ```
 
 ### Compodoc
