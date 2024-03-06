@@ -14,6 +14,7 @@ export class CreateBookingDto {
 
   @IsNotEmpty({ message: 'user_ids cannot be empty' })
   @IsArray({ message: 'user_ids should be passed as array' })
+  // TODO: 处理参会人员
   userIds: number[]
 
   @IsOptional()

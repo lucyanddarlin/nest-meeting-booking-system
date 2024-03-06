@@ -62,9 +62,8 @@ export class BookingService {
     }
 
     // 获取会议室, 参与人, 会议发起人
-    const [meetingRoom, participants, user] = await Promise.all([
+    const [meetingRoom, user] = await Promise.all([
       this.meetingRoomService.getMeetingRoomById(bookingDto.meetingRoomId),
-      this.userService.getUserInfoByIds(bookingDto.userIds),
       this.userService.getUserById(payLoad.id, payLoad.isAdmin),
     ])
 

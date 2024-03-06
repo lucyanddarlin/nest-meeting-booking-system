@@ -19,7 +19,6 @@ import { Permission } from './resource/user/entities/permission.entity'
 import { RedisModule } from './resource/redis/redis.module'
 import { CaptchaModule } from './resource/captcha/captcha.module'
 import { AuthModule } from './resource/auth/auth.module'
-import { DemoModule } from './resource/demo/demo.module'
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
 import { LoginGuard } from './guard/login.guard'
 import { PermissionGuard } from './guard/permission.guard'
@@ -35,6 +34,7 @@ import { LocationModule } from './resource/location/location.module'
 import { Location } from './resource/location/entities/location.entity'
 import { BookingModule } from './resource/booking/booking.module'
 import { Booking } from './resource/booking/entities/booking.entity'
+import { StatisticModule } from './resource/statistic/statistic.module'
 
 @Module({
   imports: [
@@ -128,11 +128,11 @@ import { Booking } from './resource/booking/entities/booking.entity'
     RedisModule,
     CaptchaModule,
     AuthModule,
-    DemoModule,
     MeetingRoomModule,
     EquipmentModule,
     LocationModule,
     BookingModule,
+    StatisticModule,
   ],
   controllers: [AppController],
   providers: [
