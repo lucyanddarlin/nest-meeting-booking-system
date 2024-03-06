@@ -133,9 +133,8 @@ export class BookingService {
    * @param id
    */
   async urgeBooking(id: number) {
-    const hasUrged = await this.redisService.get(
-      `${CAPTCHA_KEY.urge_booking}${id}`,
-    )
+    const captchaKey = `${CAPTCHA_KEY.urge_booking}${id}`
+    const hasUrged = await this.redisService.get(captchaKey)
 
     if (hasUrged) {
       throw new ErrorException(BOOKING_BUSY_URGE, '催办频繁, 请稍后再试')
@@ -161,14 +160,12 @@ export class BookingService {
           subject: '会议预订提醒',
           html: `id 为 ${id} 的会议预订正在等待审批`,
         }),
-        this.redisService.set(
-          `${CAPTCHA_KEY.urge_booking}${id}`,
-          1,
-          BOOKING_URGE_TIME_INTERVAL,
-        ),
+        this.redisService.set(captchaKey, 1, BOOKING_URGE_TIME_INTERVAL),
       ])
       return '催办成功'
     } catch (error) {
+      this.redisService.del(captchaKey)
+
       throw new ErrorException(COMMON_ERR, '催办异常: ' + error.message)
     }
   }
@@ -225,12 +222,6 @@ export class BookingService {
       query,
       getPaginationOptions(page, limit),
     )
-
-    items.map((book) => {
-      delete book.user.password
-
-      return book
-    })
 
     return { list: items, meta }
   }

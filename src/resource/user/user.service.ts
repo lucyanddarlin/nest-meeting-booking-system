@@ -102,6 +102,9 @@ export class UserService {
    */
   async login(loginUser: LoginUserDto, isAdmin?: boolean): Promise<LoginVo> {
     const existUser = await this.userRepository.findOne({
+      select: {
+        password: true,
+      },
       where: {
         username: loginUser.username,
         isAdmin,
@@ -174,7 +177,9 @@ export class UserService {
     const nickName = nextBaseInfo.nickname ?? existUser.nickName
     const avatar = nextBaseInfo.avatar ?? existUser.avatar
     const nextUser: User = { ...existUser, phone, nickName, avatar }
+
     const [err] = await to(this.userRepository.save(nextUser))
+
     if (err) {
       throw new ErrorException(COMMON_ERR, '更新用户信息异常: ' + err.message)
     }
@@ -191,7 +196,11 @@ export class UserService {
     if (pwdObj.newPassword !== pwdObj.newPasswordConfirm) {
       throw new ErrorException(PASSWORD_NOT_CONFIRM, '密码不一致')
     }
-    const existUser = await this.userRepository.findOne({ where: { id } })
+    const existUser = await this.userRepository.findOne({
+      where: { id },
+      select: { password: true },
+    })
+
     if (!existUser) {
       throw new UserNotExistError()
     }
@@ -263,11 +272,7 @@ export class UserService {
       throw new UserNotExistError()
     }
 
-    const userInfos = query.map((info) => {
-      return { ...info, password: undefined }
-    })
-
-    return userInfos
+    return query
   }
 
   /**
@@ -278,15 +283,12 @@ export class UserService {
   async paginate(page: number, limit: number): Promise<UserListVo> {
     const queryBuilder = this.userRepository.createQueryBuilder('user')
     queryBuilder.orderBy('user.updatedAt', 'DESC')
-    const [paginate] = await paginateRawAndEntities(
+    const [{ items, meta }] = await paginateRawAndEntities(
       queryBuilder,
       getPaginationOptions(page, limit),
     )
-    const list = paginate.items.map((i) => {
-      return { ...i, password: undefined }
-    })
 
-    return { list, meta: paginate.meta }
+    return { list: items, meta }
   }
 
   /**

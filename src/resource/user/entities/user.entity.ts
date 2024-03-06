@@ -17,7 +17,7 @@ export class User {
   @Column({ length: 50, comment: 'username' })
   username: string
 
-  @Column({ length: 100, comment: 'pwd' })
+  @Column({ select: false, length: 100, comment: 'pwd' })
   password: string
 
   @Column({ name: 'nickname', length: 50, comment: 'nick_name' })
